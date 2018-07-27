@@ -1,0 +1,180 @@
+import torch
+import numpy as np
+import dnnutil.network as network
+
+
+class Trainer(object):
+    '''Trainer(net, optim, loss_fn, accuracy_metric, epoch_size=None)
+    
+    Base class for all network trainers. Network trainer classes provide 
+    methods to facilitate training and testing deep network models. The goal
+    is to encapsulate the common functionality, to reduce the boilerplate
+    code that needs to be repeated across projects.
+
+    Args:
+        net (torch.nn.Module): An instance of a network that inherits from
+            torch.nn.Module.
+        optim (torch.optim.Optimizer): An instance of an optimizer that
+            inherits from torch.optim.Optimizer.
+        loss_fn (callable): A callable that calculates and returns a loss
+            value. The loss value should be a single-element Tensor.
+        accuracy_metric (callable): A callabel that calculates and returns
+            an accuracy value. Usually this will be a floating point number
+            in [0, 1].
+        epoch_size (int): An optional epoch size, denoting the number of
+            batches per epoch. If None, an epoch will consist of as many
+            batches as can be made from the dataset.
+    '''
+    def __init__(self, net, optim, loss_fn, accuracy_metric, epoch_size=None):
+        self.net = net
+        self.loss_fn = loss_fn
+        self.optim = optim
+        self.measure_accuracy = accuracy_metric
+        self.epoch_size = epoch_size
+
+    def train(self, dataloader, epoch):
+        '''Train the Trainer's network.
+
+        Args:
+            dataloader (torch.utils.data.DataLoader): An instance of a
+                DataLoader, which will provide access to the training data.
+            epoch (int): The current epoch.
+
+        Returns:
+            loss (float): The mean loss over the epoch.
+            accuracy (float): The mean accuracy over the epoch (in [0, 1]).
+        '''
+        self.net.train()
+        return self._run_epoch(dataloader, epoch)
+
+    def eval(self, dataloader, epoch):
+        '''Evaluate the Trainer's network.
+
+        Args:
+            dataloader (torch.utils.data.DataLoader): An instance of a
+                DataLoader, which will provide access to the testing data.
+            epoch (int): The current epoch.
+        Returns:
+            loss (float): The mean loss over the epoch.
+            accuracy (float): The mean accuracy over the epoch (in [0, 1]).
+        '''
+        self.net.eval()
+        return self._run_epoch(dataloader, epoch)
+        
+    def _run_epoch(self, dataloader, epoch):
+        '''Perform a single epoch of either training or evaluation.
+
+        Args:
+            dataloader (torch.utils.data.DataLoader): An instance of a
+                DataLoader, which will provide access to the testing data.
+            epoch (int): The current epoch.
+        Returns:
+            loss (float): The mean loss over the epoch.
+            accuracy (float): The mean accuracy over the epoch (in [0, 1]).
+        '''
+        if self.epoch_size is None:
+            N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
+        else:
+            N = self.epoch_size
+        msg = 'train' if self.net.training else 'test'
+        func = self.train_batch if self.net.training else self.test_batch
+        loss = []
+        acc = []
+        for i, batch in enumerate(dataloader):
+            batch_loss, batch_acc = func(batch)
+                
+            loss.append(batch_loss)
+            acc.append(batch_acc)
+
+            print(f'\rEPOCH {epoch}: {msg} batch {i:04d}/{N}{" "*10}',
+                  end='', flush=True)
+
+            if self.epoch_size is not None and i == self.epoch_size:
+                break
+
+        loss = np.mean(loss)
+        acc = np.mean(acc)
+
+        return loss, acc
+        
+    def train_batch(self, batch):
+        '''Train the Trainer's network on a single training batch.
+        '''
+        raise NotImplementedError()
+
+    def test_batch(self, batch):
+        '''Test the Trainer's network on a single testing batch.
+        '''
+        raise NotImplementedError()
+
+
+class ClassifierTrainer(Trainer):
+    '''ClassifierTrainer(net, optim, loss_fn, accuracy_metric, epoch_size=None)
+    
+    Trainer for training a network to do image classification.
+
+    Args:
+        net (torch.nn.Module): An instance of a network that inherits from
+            torch.nn.Module.
+        optim (torch.optim.Optimizer): An instance of an optimizer that
+            inherits from torch.optim.Optimizer.
+        loss_fn (callable): A callable that calculates and returns a loss
+            value. The loss value should be a single-element Tensor.
+        accuracy_metric (callable): A callabel that calculates and returns
+            an accuracy value. Usually this will be a floating point number
+            in [0, 1].
+        epoch_size (int): An optional epoch size, denoting the number of
+            batches per epoch. If None, an epoch will consist of as many
+            batches as can be made from the dataset.
+    '''
+    def train_batch(self, batch):
+        '''Train the Trainer's network on a single training batch.
+
+        Args:
+            batch (iterable): A 2-tuple of (images, labels). Images is a 4-d
+                Tensor of shape (BxCxHxW), and labels is a Tensor of 2 or more
+                dimensions (BxLx*) which matches images in the first (batch)
+                dimension. The exact dimensionality of labels will depend on
+                the application and loss function chosen, but often consists
+                of integer class-indexes.
+        Returns:
+            loss (float): The mean loss over the batch.
+            accuracy (float): The mean accuracy over the batch (in [0, 1]).
+        '''
+        self.optim.zero_grad()
+
+        imgs, labels = network.tocuda(batch)
+        imgs.requires_grad_()
+
+        predictions = self.net(imgs)
+        loss = self.loss_fn(predictions, labels)
+
+        loss.backward()
+        self.optim.step()
+
+        loss = loss.item()
+        with torch.no_grad():
+            accuracy = self.measure_accuracy(predictions, labels)
+        return loss, accuracy
+
+    def test_batch(self, batch):
+        '''Evaluate the Trainer's network on a single testing batch.
+
+        Args:
+            batch (iterable): A 2-tuple of (images, labels). Images is a 4-d
+                Tensor of shape (BxCxHxW), and labels is a Tensor of 2 or more
+                dimensions (BxLx*) which matches images in the first (batch)
+                dimension. The exact dimensionality of labels will depend on
+                the application and loss function chosen, but often consists
+                of integer class-indexes.
+        Returns:
+            loss (float): The mean loss over the batch.
+            accuracy (float): The mean accuracy over the batch (in [0, 1]).
+        '''
+        with torch.no_grad():
+            imgs, labels = network.tocuda(batch)
+            predictions = self.net(imgs)
+            loss = self.loss_fn(predictions, labels)
+            accuracy = self.measure_accuracy(predictions, labels)
+        return loss, accuracy
+
