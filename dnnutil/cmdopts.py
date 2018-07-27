@@ -2,42 +2,6 @@ import argparse
 from pathlib import Path
 
 
-def _next_rid():
-    rid = 1
-    p = Path('runs')
-    if p.is_dir():
-        runs = list(p.iterdir())
-        if len(runs) > 0:
-            last = max(int(x.name) for x in runs if x.name.isnumeric())
-            rid = last + 1
-    return rid
-
-
-class RunSetter(argparse.Action):
-    
-    def __init_(self, option_strings, dest, nargs=None, **kwargs):
-        if nargs is not None:
-            raise ValueError('nargs not allowed')
-        super(RunSetter, self).__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        rid = values
-        if rid == 0:
-            rid = _next_rid()
-        setattr(namespace, self.dest, rid)
-
-
-class TrainArgParser(argparse.ArgumentParser):
-
-    def parse_args(self, args=None, namespace=None):
-        args = super(TrainArgParser, self).parse_args(args, namespace)
-        for a in self._actions:
-            if isinstance(a, RunSetter) and getattr(args, a.dest) == a.default:
-                rid = _next_rid()
-                setattr(args, a.dest, rid)
-        return args
-                
-
 def basic_parser(description='', **kwargs):
     '''Returns an argparse.ArgumentParser commandline parser, pre-populated
     with common arguments used when training deep networks. The argument
@@ -59,7 +23,7 @@ def basic_parser(description='', **kwargs):
     batch_size = 16 if 'batch_size' not in kwargs else kwargs['batch_size']
     epochs = 50 if 'epochs' not in kwargs else kwargs['epochs']
 
-    parser = TrainArgParser(description)
+    parser = argparse.ArgumentParser(description)
 
     a = parser.add_argument('--lr', type=float, default=lr, 
         help='Learning rate')
