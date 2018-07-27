@@ -15,7 +15,7 @@ class TextLog(object):
     running time for both training and evaluation.
 
     Args:
-        filepath (str): Path to the log file.
+        filepath (str or Path): Path to the log file.
         console (bool): Whether to print log information to the commandline.
             Default: True.
         create_ok (bool): If True, allows the creation of any missing

@@ -37,7 +37,7 @@ def basic_parser(description='', **kwargs):
         help='Load model checkpoint from file CHECKPOINT')
     a = parser.add_argument('--test', action='store_true', default=False,
         help='Runs inference on the model')
-    a = parser.add_argument('--rid', type=int, default=0, action=RunSetter,
+    a = parser.add_argument('--rid', type=int, default=0,
         help='Positive int representing run id. The run id can be used to keep '
              'seperate logs and checkpoints')
     a = parser.add_argument('--note', default='',

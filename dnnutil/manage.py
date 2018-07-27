@@ -30,7 +30,7 @@ class Checkpointer(object):
                 self.best = val
                 save_model(model, self.path / 'best_model')
         if self.save_multi:
-            if (epoch is not None) and (epoch % self.period == 0):
+            if (epoch is not None) and (epoch % self.period == self.period - 1):
                 save_model(model, self.path / f'model_weights_{epoch}')
         else:   
             save_model(model, self.path / f'model_weights')
@@ -52,13 +52,13 @@ class Manager(object):
     Args:
         root (str or Path): Path to root folder where run data will be saved.
             Default: "./runs/".
-        run_num (int): A numeric identifier for the run. If -1, it will be set
+        run_num (int): A numeric identifier for the run. If 0, it will be set
             to 1 greater than the largest existing run id. If None, no new run
             will be created -- this will have to be done later with a call to
-            set_run.
+            set_run. Default: None.
 
     Kwargs:
-        enforce_exists (bool): If True and run_num is something other than -1
+        enforce_exists (bool): If True and run_num is something other than 0
             or None, a RunException will be raised if a run for run_num does
             not already exist. Default: True.
         create_ok (bool): If True, allows the Manager to create the directory
@@ -79,7 +79,7 @@ class Manager(object):
     def set_run(self, run_num=-1, enforce_exists=True):
         '''TODO
         '''
-        if run_num == -1:
+        if run_num == 0:
             run_num = self._next_rid()
         elif enforce_exists:
             run_dir = self.root.joinpath(str(run_num))
@@ -91,6 +91,15 @@ class Manager(object):
         run_dir.mkdir(exist_ok=True)
         
         self.run_dir = run_dir
+
+    def set_description(self, description='', overwrite=False):
+        '''TODO
+        '''
+        mode = 'w' if overwrite else 'a'
+        with self.run_dir.joinpath('description.txt').open(mode) as fp:
+            if not description:
+                description = input('Enter a description:\n')
+            fp.write(description)
 
     def _next_rid(self):
         # Returns a new run id, which is 1 greater than the largest existant
