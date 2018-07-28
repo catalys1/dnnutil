@@ -41,7 +41,7 @@ def main():
     test_loader = torch.utils.data.DataLoader(test_data, shuffle=False, **kwargs)
 
     net = dnnutil.load_model(mymodel.Model, args.model)
-    optim = torch.optim.SGD(net.parameters(), argsl.lr, momentum=0.9)
+    optim = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9)
     loss_fn = torch.nn.CrossEntropyLoss()
 
     manager = dnnutil.Manager(run_num=args.rid)
