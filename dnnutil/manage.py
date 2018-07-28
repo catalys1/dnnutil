@@ -17,7 +17,7 @@ class Checkpointer(object):
         period (int): How often to save a new checkpoint (in epochs).
             Default: 1.
         save_best (bool): If True, saves a seperate checkpoint that is updated
-            with the best model weights so far.
+            with the best model weights so far. Default: True.
         metric (str): Metric used to measure model performance. Can be one of
             {"loss", "accuracy"}. Default: "loss".
     '''
