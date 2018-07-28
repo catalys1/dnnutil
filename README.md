@@ -22,6 +22,7 @@ import torch
 import dnnutil
 import mymodel
 import mydataset
+import time
 
 
 def accuracy(prediction, label):
