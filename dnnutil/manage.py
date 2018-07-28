@@ -4,7 +4,22 @@ from dnnutil.network import save_model
 
 
 class Checkpointer(object):
-    '''TODO
+    '''The Checkpointer class handles saving model checkpoints. It can be set
+    to save model weights periodically, keeping multiple copies or a single
+    most recent copy, as well as keeping a seperate checkpoint of the
+    best-so-far weights according to a metric.
+
+    Args:
+        checkpoint_dir (str or Path): Directory to save checkpoints in.
+        save_multi (bool): When True, a new checkpoint file will be created
+            each time a checkpoint is saved. Otherwise the previous checkpoint
+            will be overwritten.
+        period (int): How often to save a new checkpoint (in epochs).
+            Default: 1.
+        save_best (bool): If True, saves a seperate checkpoint that is updated
+            with the best model weights so far.
+        metric (str): Metric used to measure model performance. Can be one of
+            {"loss", "accuracy"}. Default: "loss".
     '''
     def __init__(self, checkpoint_dir, save_multi=False, period=1, 
                  save_best=True, metric='loss'):
@@ -23,7 +38,14 @@ class Checkpointer(object):
             self.compare = lambda x, y: x > y
 
     def checkpoint(self, model, val=None, epoch=None):
-        '''TODO
+        '''Save model weights in a checkpoint file.
+
+        Args:
+            model (torch.nn.Module): The network for which to save weights.
+            val (float): Value of the metric being used to determine the best
+                model. Default: None.
+            epoch (int): Most recently processed epoch. Used to postscript
+                checkpoint files when save_multi is True. Default: None.
         '''
         if self.save_best:
             if val is not None and self.compare(val, self.best):
@@ -37,6 +59,9 @@ class Checkpointer(object):
 
 
 class RunException(Exception):
+    '''RunException is raised when trying to resume from a run that does not
+    exist.
+    '''
     pass
 
 
@@ -76,8 +101,15 @@ class Manager(object):
             enforce_exists = kwargs.get('enforce_exists', True)
             self.set_run(run_num, enforce_exists)
 
-    def set_run(self, run_num=-1, enforce_exists=True):
-        '''TODO
+    def set_run(self, run_num=0, enforce_exists=True):
+        '''Set up the directory for this run.
+
+        Args:
+            run_num (int): The run id number. If 0, it gets overwritten with
+                the next available run id. Default: 0.
+            enforce_exists (bool): If True, and run_id is not 0, then raises
+                a RunException if the run directory does not already exist.
+                Default: True.
         '''
         if run_num == 0:
             run_num = self._next_rid()
@@ -93,7 +125,16 @@ class Manager(object):
         self.run_dir = run_dir
 
     def set_description(self, description='', overwrite=False):
-        '''TODO
+        '''Writes a description to description.txt in the run folder.
+
+        Args:
+            description (str): A textual description of this run. This can
+                be anything that you would want to know or remember about this
+                run, such as how it differs from other runs. If the description
+                is empty or None, the user will be prompted to enter
+                a description at the prompt. Default: "" (empty).
+            overwrite (bool): If True, overwrite description.txt (if it
+                exists). Otherwise, append to it. Default: False.
         '''
         mode = 'w' if overwrite else 'a'
         with self.run_dir.joinpath('description.txt').open(mode) as fp:
