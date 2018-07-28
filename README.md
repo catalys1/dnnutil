@@ -1,4 +1,4 @@
-# Deep Nueral Net Utilities for PyTorch
+# Deep Neural Net Utilities for PyTorch
 
 A package containing utilities for handling common deep-network tasks in PyTorch.
 
