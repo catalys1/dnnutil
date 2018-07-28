@@ -13,7 +13,7 @@ def basic_parser(description='', **kwargs):
         description (str): Optional description of the program, which will
             be passed the constructor of the ArgumentParser.
 
-    Valid kwargs:
+    Kwargs:
         lr (float): The default learning rate.
         batch_size (int): The default batch size.
         epochs (int): The default number of training epochs.
