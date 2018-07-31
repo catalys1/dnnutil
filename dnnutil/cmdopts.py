@@ -26,26 +26,27 @@ def basic_parser(description='', **kwargs):
     parser = argparse.ArgumentParser(description)
 
     a = parser.add_argument('--lr', type=float, default=lr, 
-        help='Learning rate')
+        help=f'Learning rate. Default: {lr}.')
     a = parser.add_argument('--batch_size', type=int, default=batch_size,
-        help='Batch size')
+        help=f'Batch size. Default: {batch_size}.')
     a = parser.add_argument('--epochs', type=int, default=epochs,
-        help='Epoch number to train to')
+        help=f'Number of epochs to train for. Default: {epochs}.')
     a = parser.add_argument('--start', type=int, default=0,
-        help='Epoch number to start from. Useful for resuming training.')
+        help='Epoch number to start from. Useful for resuming training. '
+             'Default: 0.')
     a = parser.add_argument('--model', metavar='CHECKPOINT', default='',
-        help='Load model checkpoint from file CHECKPOINT')
+        help='Load model checkpoint from file CHECKPOINT.')
     a = parser.add_argument('--test', action='store_true', default=False,
-        help='Runs inference on the model')
+        help='Runs inference on the model.')
     a = parser.add_argument('--rid', type=int, default=0,
         help='Positive int representing run id. The run id can be used to keep '
-             'seperate logs and checkpoints')
+             'seperate logs and checkpoints. Default: 0')
     a = parser.add_argument('--note', default='',
         help='Any notes about the model or run. Can be used to keep track of '
              'different runs, using different hyperparameters, etc.')
     a = parser.add_argument('--resume', action='store_true',
         help='Flag indicating a desire to restore values based on the last '
              'epoch of training. Actual saving and restoring of state must '
-             'be handled by i.e. a Manager object')
+             'be handled by i.e. a Manager object.')
 
     return parser
