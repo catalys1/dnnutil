@@ -1,5 +1,7 @@
 import torch
 from pathlib import Path
+import json
+import re
 from dnnutil.network import save_model
 
 
@@ -124,6 +126,15 @@ class Manager(object):
         
         self.run_dir = run_dir
 
+    def _next_rid(self):
+        # Returns a new run id, which is 1 greater than the largest existant
+        rid = 1
+        runs = [int(x.name) for x in self.root.iterdir() if x.name.isnumeric()]
+        if len(runs) > 0:
+            last = max(runs)
+            rid = last + 1
+        return rid
+
     def set_description(self, description='', overwrite=False):
         '''Writes a description to description.txt in the run folder.
 
@@ -142,12 +153,71 @@ class Manager(object):
                 description = input('Enter a description:\n')
             fp.write(description)
 
-    def _next_rid(self):
-        # Returns a new run id, which is 1 greater than the largest existant
-        rid = 1
-        runs = [int(x.name) for x in self.root.iterdir() if x.name.isnumeric()]
-        if len(runs) > 0:
-            last = max(runs)
-            rid = last + 1
-        return rid
+    def save_state(self, epoch_num, lr, **kwargs):
+        '''Save some minimal state about the run so that it can be easily
+        continued in the case of interruption or desire to train longer.
+
+        Args:
+            epoch_num (int): Index of last epoch of training completed.
+            lr (float): Last learning rate used.
+
+        Kwargs:
+            None currently.
+        '''
+        kwargs.update(epoch_num=epoch_num, lr=lr)
+        with open(self.run_dir / '.state.json', 'w') as f:
+            json.dump(kwargs, f)
+
+    def load_state(self, args, match_model_epoch=False, use_best=False):
+        '''Restore the state of training at the time it finished or was
+        interrupted. If args.resume if False, this simply return args.
+        Otherwise, it changes the values in args to reflect the saved state,
+        then returns it. Note that this only affects args - this will not
+        restore the state of the momentum variables in the optimizer, for
+        instance.
+
+        Args:
+            args (Namespace): A Namespace object, presumably created by the
+                argument parser.
+            match_model_epoch (bool): When True, tries to set the starting
+                epoch based on the filename of the most recently saved weight
+                checkpoint.
+            use_best (bool): Restore the model weights from the best-so-far
+                checkpoint. This is mutually exclusive with match_model_epoch,
+                which will be ignored when use_best is set True.
+        '''
+        if not args.resume:
+            return args
+
+        f = self.run_dir / '.state.json'
+        if not f.is_file():
+            raise RunException(f'Attempted to load state at {str(f)}, but no '
+                'saved state exists')
+        with open(f, 'r') as f:
+            state = json.load(f)
+
+        try:
+            model_weight_files = sorted(
+                self.run_dir.glob('model_weights*'),
+                key=lambda x: int(x.name.split('_')[-1])
+            )
+            weight_file = model_weight_files[-1]
+        except ValueError as e:
+            # Error raised when the file has no numeric postscript
+            weight_file = run_dir / 'model_weights'
+
+        args.start = state.epoch_num
+
+        if use_best:
+            weight_file = run_dir / 'best_model'
+        elif match_model_epoch:
+            if weight_file.name.split('_')[-1].is_numeric():
+                n = int(weight_file.name.split('_')[-1])
+                args.start = n + 1
+
+        args.epochs += args.start
+        args.model = str(weight_file)
+        args.lr = state['lr']
+        
+        return args
 

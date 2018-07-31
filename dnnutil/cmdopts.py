@@ -43,5 +43,9 @@ def basic_parser(description='', **kwargs):
     a = parser.add_argument('--note', default='',
         help='Any notes about the model or run. Can be used to keep track of '
              'different runs, using different hyperparameters, etc.')
+    a = parser.add_argument('--resume', action='store_true',
+        help='Flag indicating a desire to restore values based on the last '
+             'epoch of training. Actual saving and restoring of state must '
+             'be handled by i.e. a Manager object')
 
     return parser
