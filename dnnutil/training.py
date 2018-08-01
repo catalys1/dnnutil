@@ -174,7 +174,106 @@ class ClassifierTrainer(Trainer):
         with torch.no_grad():
             imgs, labels = network.tocuda(batch)
             predictions = self.net(imgs)
-            loss = self.loss_fn(predictions, labels)
+            loss = self.loss_fn(predictions, labels).item()
             accuracy = self.measure_accuracy(predictions, labels)
         return loss, accuracy
 
+
+class AutoencoderTrainer(Trainer):
+    '''AutoencoderTrainer(net, optim, loss_fn, epoch_size=None)
+
+    Trainer for training an autoencoder network.
+
+    Args:
+        net (torch.nn.Module): An instance of a network that inherits from
+            torch.nn.Module.
+        optim (torch.optim.Optimizer): An instance of an optimizer that
+            inherits from torch.optim.Optimizer.
+        loss_fn (callable): A callable that calculates and returns a loss
+            value. The loss value should be a single-element Tensor.
+        epoch_size (int): An optional epoch size, denoting the number of
+            batches per epoch. If None, an epoch will consist of as many
+            batches as can be made from the dataset.
+    '''
+    def __init__(self, net, optim, loss_fn, epoch_size=None):
+        super(AutoencoderTrainer, self).__init__(
+            net, optim, loss_fn, None, epoch_size)
+        delattr(self, 'measure_accuracy')
+
+    def train_batch(self, batch):
+        '''Train the Trainer's network on a single training batch.
+
+        Args:
+            batch (iterable): A 2-tuple of (images, labels). Images is a 4-d
+                Tensor of shape (BxCxHxW), and labels is a Tensor of 2 or more
+                dimensions (BxLx*) which matches images in the first (batch)
+                dimension. The exact dimensionality of labels will depend on
+                the application and loss function chosen, but often consists
+                of integer class-indexes.
+        Returns:
+            loss (float): The mean loss over the batch.
+        '''
+        self.optim.zero_grad()
+
+        imgs = network.tocuda(batch)
+        imgs.requires_grad_()
+
+        predictions = self.net(imgs)
+        loss = self.loss_fn(predictions, imgs)
+
+        loss.backward()
+        self.optim.step()
+
+        loss = loss.item()
+
+        return loss
+
+    def test_batch(self, batch):
+        '''Evaluate the Trainer's network on a single testing batch.
+
+        Args:
+            batch (iterable): A 2-tuple of (images, labels). Images is a 4-d
+                Tensor of shape (BxCxHxW), and labels is a Tensor of 2 or more
+                dimensions (BxLx*) which matches images in the first (batch)
+                dimension. The exact dimensionality of labels will depend on
+                the application and loss function chosen, but often consists
+                of integer class-indexes.
+        Returns:
+            loss (float): The mean loss over the batch.
+        '''
+        with torch.no_grad():
+            imgs = network.to_cuda()
+            predictions = self.net(imgs)
+            loss = self.loss_fn(predictions, imgs).item()
+        return loss
+
+    def _run_epoch(self, dataloader, epoch):
+        '''Perform a single epoch of either training or evaluation.
+
+        Args:
+            dataloader (torch.utils.data.DataLoader): An instance of a
+                DataLoader, which will provide access to the testing data.
+            epoch (int): The current epoch.
+        Returns:
+            loss (float): The mean loss over the epoch.
+        '''
+        if self.epoch_size is None:
+            N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
+        else:
+            N = self.epoch_size
+        msg = 'train' if self.net.training else 'test'
+        func = self.train_batch if self.net.training else self.test_batch
+        loss = []
+        for i, batch in enumerate(dataloader):
+            batch_loss = func(batch)
+            loss.append(batch_loss)
+
+            print(f'\rEPOCH {epoch}: {msg} batch {i:04d}/{N}{" "*10}',
+                  end='', flush=True)
+
+            if self.epoch_size is not None and i == self.epoch_size:
+                break
+
+        loss = np.mean(loss)
+
+        return loss
