@@ -242,7 +242,7 @@ class AutoencoderTrainer(Trainer):
             loss (float): The mean loss over the batch.
         '''
         with torch.no_grad():
-            imgs = network.to_cuda()
+            imgs = network.tocuda()
             predictions = self.net(imgs)
             loss = self.loss_fn(predictions, imgs).item()
         return loss

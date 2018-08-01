@@ -151,7 +151,8 @@ class Manager(object):
         with self.run_dir.joinpath('description.txt').open(mode) as fp:
             if not description:
                 description = input('Enter a description:\n')
-            fp.write(description)
+            if description:
+                print(description, file=fp)
 
     def save_state(self, epoch_num, lr, **kwargs):
         '''Save some minimal state about the run so that it can be easily
