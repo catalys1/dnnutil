@@ -220,7 +220,6 @@ class Manager(object):
                 n = int(weight_file.name.split('_')[-1])
                 args.start = n + 1
 
-        args.epochs += args.start
         args.model = str(weight_file)
 
         if restore_lr:
