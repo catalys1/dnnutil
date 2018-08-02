@@ -169,9 +169,10 @@ class Manager(object):
         with open(self.run_dir / '.state.json', 'w') as f:
             json.dump(kwargs, f)
 
-    def load_state(self, args, match_model_epoch=False, use_best=False):
+    def load_state(self, args, match_model_epoch=False, use_best=False,
+                   restore_lr=True):
         '''Restore the state of training at the time it finished or was
-        interrupted. If args.resume if False, this simply return args.
+        interrupted. If args.resume is False, this simply return args.
         Otherwise, it changes the values in args to reflect the saved state,
         then returns it. Note that this only affects args - this will not
         restore the state of the momentum variables in the optimizer, for
@@ -186,8 +187,11 @@ class Manager(object):
             use_best (bool): Restore the model weights from the best-so-far
                 checkpoint. This is mutually exclusive with match_model_epoch,
                 which will be ignored when use_best is set True.
+            restore_lr (bool): When True, the learning rate will be set to the
+                lr saved in the state file. Otherwise, it will remain set to
+                whatever was passed in through args.
         '''
-        if not args.resume:
+        if not hasattr(args, 'resume') or not args.resume:
             return args
 
         f = self.run_dir / '.state.json'
@@ -205,12 +209,12 @@ class Manager(object):
             weight_file = model_weight_files[-1]
         except ValueError as e:
             # Error raised when the file has no numeric postscript
-            weight_file = run_dir / 'model_weights'
+            weight_file = self.run_dir / 'model_weights'
 
-        args.start = state.epoch_num
+        args.start = state['epoch_num'] + 1
 
         if use_best:
-            weight_file = run_dir / 'best_model'
+            weight_file = self.run_dir / 'best_model'
         elif match_model_epoch:
             if weight_file.name.split('_')[-1].is_numeric():
                 n = int(weight_file.name.split('_')[-1])
