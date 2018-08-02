@@ -222,7 +222,9 @@ class Manager(object):
 
         args.epochs += args.start
         args.model = str(weight_file)
-        args.lr = state['lr']
+
+        if self.restore_lr:
+            args.lr = state['lr']
         
         return args
 
