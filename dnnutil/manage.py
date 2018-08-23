@@ -115,6 +115,8 @@ class Manager(object):
         '''
         if run_num == 0:
             run_num = self._next_rid()
+        elif run_num == -1:
+            run_num = self._last_rid()
         elif enforce_exists:
             run_dir = self.root.joinpath(str(run_num))
             if not run_dir.is_dir():
@@ -134,6 +136,14 @@ class Manager(object):
             last = max(runs)
             rid = last + 1
         return rid
+
+    def _last_rid(self):
+        runs = [int(x.name) for x in self.root.iterdir() if x.name.isnumeric()]
+        if len(runs) > 0:
+            last = max(runs)
+        else:
+            raise RunException('No previous run exists')
+        return last
 
     def set_description(self, description='', overwrite=False):
         '''Writes a description to description.txt in the run folder.
