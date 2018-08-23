@@ -32,6 +32,11 @@ def accuracy(prediction, label):
 def main():
     parser = dnnutil.basic_parser()
     args = parser.parse_args()
+    
+    # manager keeps track of where to save/load state for a particular run
+    manager = dnnutil.Manager(run_num=args.rid)
+    manager.set_description(args.note)
+    args = manager.load_state(args, restore_lr=False)
 
     train_data = mydataset.Dataset(train=True)
     test_data = mydataset.Dataset(train=False)
@@ -44,8 +49,8 @@ def main():
     optim = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9)
     loss_fn = torch.nn.CrossEntropyLoss()
 
-    manager = dnnutil.Manager(run_num=args.rid)
-    manager.set_description('An example using dnnutil')
+    # trainer handles the details of training/eval, logger keeps a log of the
+    # training, checkpointer handles saving model weights
     trainer = dnnutil.ClassifierTrainer(net, optim, loss_fn, accuracy)
     logger = dnnutil.TextLog(manager.run_dir / 'log.txt')
     checkpointer = dnnutil.Checkpointer(manager.run_dir, period=5)
@@ -53,11 +58,13 @@ def main():
     for e in range(args.start, args.epochs):
         start = time.time()
 
+        # just call .train or .eval to run the epoch
         train_loss, train_acc = trainer.train(train_loader, e)
         test_loss, test_acc = trainer.eval(test_load, e)
 
         t = time.time() - start
         lr = optim.param_groups[-1]['lr']
+        # log and checkpoint at the end of an epoch
         log.log(e, t, train_loss, train_acc, test_loss, test_acc, lr)
         check.checkpoint(net, test_loss, e)
 
