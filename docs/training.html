@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module training</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>training</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/catalys1/projects/research/dnnutil/dnnutil/training.py">/home/catalys1/projects/research/dnnutil/dnnutil/training.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dnnutil.network.html">dnnutil.network</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="torch.html">torch</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="training.html#Trainer">Trainer</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="training.html#AutoencoderTrainer">AutoencoderTrainer</a>
+</font></dt><dt><font face="helvetica, arial"><a href="training.html#ClassifierTrainer">ClassifierTrainer</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AutoencoderTrainer">class <strong>AutoencoderTrainer</strong></a>(<a href="training.html#Trainer">Trainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#AutoencoderTrainer">AutoencoderTrainer</a>(net,&nbsp;optim,&nbsp;loss_fn,&nbsp;epoch_size=None)<br>
+&nbsp;<br>
+<a href="#Trainer">Trainer</a>&nbsp;for&nbsp;training&nbsp;an&nbsp;autoencoder&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;net&nbsp;(torch.nn.Module):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a&nbsp;network&nbsp;that&nbsp;inherits&nbsp;from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;torch.nn.Module.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optim&nbsp;(torch.optim.Optimizer):&nbsp;An&nbsp;instance&nbsp;of&nbsp;an&nbsp;optimizer&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inherits&nbsp;from&nbsp;torch.optim.Optimizer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_fn&nbsp;(callable):&nbsp;A&nbsp;callable&nbsp;that&nbsp;calculates&nbsp;and&nbsp;returns&nbsp;a&nbsp;loss<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value.&nbsp;The&nbsp;loss&nbsp;value&nbsp;should&nbsp;be&nbsp;a&nbsp;single-element&nbsp;Tensor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch_size&nbsp;(int):&nbsp;An&nbsp;optional&nbsp;epoch&nbsp;size,&nbsp;denoting&nbsp;the&nbsp;number&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;per&nbsp;epoch.&nbsp;If&nbsp;None,&nbsp;an&nbsp;epoch&nbsp;will&nbsp;consist&nbsp;of&nbsp;as&nbsp;many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;as&nbsp;can&nbsp;be&nbsp;made&nbsp;from&nbsp;the&nbsp;dataset.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="training.html#AutoencoderTrainer">AutoencoderTrainer</a></dd>
+<dd><a href="training.html#Trainer">Trainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="AutoencoderTrainer-__init__"><strong>__init__</strong></a>(self, net, optim, loss_fn, epoch_size=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="AutoencoderTrainer-test_batch"><strong>test_batch</strong></a>(self, batch)</dt><dd><tt>Evaluate&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;testing&nbsp;batch.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;batch&nbsp;(iterable):&nbsp;A&nbsp;2-tuple&nbsp;of&nbsp;(images,&nbsp;labels).&nbsp;Images&nbsp;is&nbsp;a&nbsp;4-d<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tensor&nbsp;of&nbsp;shape&nbsp;(BxCxHxW),&nbsp;and&nbsp;labels&nbsp;is&nbsp;a&nbsp;Tensor&nbsp;of&nbsp;2&nbsp;or&nbsp;more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions&nbsp;(BxLx*)&nbsp;which&nbsp;matches&nbsp;images&nbsp;in&nbsp;the&nbsp;first&nbsp;(batch)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimension.&nbsp;The&nbsp;exact&nbsp;dimensionality&nbsp;of&nbsp;labels&nbsp;will&nbsp;depend&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;application&nbsp;and&nbsp;loss&nbsp;function&nbsp;chosen,&nbsp;but&nbsp;often&nbsp;consists<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;integer&nbsp;class-indexes.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;batch.</tt></dd></dl>
+
+<dl><dt><a name="AutoencoderTrainer-train_batch"><strong>train_batch</strong></a>(self, batch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;training&nbsp;batch.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;batch&nbsp;(iterable):&nbsp;A&nbsp;2-tuple&nbsp;of&nbsp;(images,&nbsp;labels).&nbsp;Images&nbsp;is&nbsp;a&nbsp;4-d<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tensor&nbsp;of&nbsp;shape&nbsp;(BxCxHxW),&nbsp;and&nbsp;labels&nbsp;is&nbsp;a&nbsp;Tensor&nbsp;of&nbsp;2&nbsp;or&nbsp;more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions&nbsp;(BxLx*)&nbsp;which&nbsp;matches&nbsp;images&nbsp;in&nbsp;the&nbsp;first&nbsp;(batch)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimension.&nbsp;The&nbsp;exact&nbsp;dimensionality&nbsp;of&nbsp;labels&nbsp;will&nbsp;depend&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;application&nbsp;and&nbsp;loss&nbsp;function&nbsp;chosen,&nbsp;but&nbsp;often&nbsp;consists<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;integer&nbsp;class-indexes.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;batch.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="training.html#Trainer">Trainer</a>:<br>
+<dl><dt><a name="AutoencoderTrainer-eval"><strong>eval</strong></a>(self, dataloader, epoch)</dt><dd><tt>Evaluate&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;testing&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<dl><dt><a name="AutoencoderTrainer-train"><strong>train</strong></a>(self, dataloader, epoch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="training.html#Trainer">Trainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ClassifierTrainer">class <strong>ClassifierTrainer</strong></a>(<a href="training.html#Trainer">Trainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ClassifierTrainer">ClassifierTrainer</a>(net,&nbsp;optim,&nbsp;loss_fn,&nbsp;accuracy_metric,&nbsp;epoch_size=None)<br>
+&nbsp;<br>
+<a href="#Trainer">Trainer</a>&nbsp;for&nbsp;training&nbsp;a&nbsp;network&nbsp;to&nbsp;do&nbsp;image&nbsp;classification.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;net&nbsp;(torch.nn.Module):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a&nbsp;network&nbsp;that&nbsp;inherits&nbsp;from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;torch.nn.Module.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optim&nbsp;(torch.optim.Optimizer):&nbsp;An&nbsp;instance&nbsp;of&nbsp;an&nbsp;optimizer&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inherits&nbsp;from&nbsp;torch.optim.Optimizer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_fn&nbsp;(callable):&nbsp;A&nbsp;callable&nbsp;that&nbsp;calculates&nbsp;and&nbsp;returns&nbsp;a&nbsp;loss<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value.&nbsp;The&nbsp;loss&nbsp;value&nbsp;should&nbsp;be&nbsp;a&nbsp;single-element&nbsp;Tensor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy_metric&nbsp;(callable):&nbsp;A&nbsp;callabel&nbsp;that&nbsp;calculates&nbsp;and&nbsp;returns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;accuracy&nbsp;value.&nbsp;Usually&nbsp;this&nbsp;will&nbsp;be&nbsp;a&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;[0,&nbsp;1].<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch_size&nbsp;(int):&nbsp;An&nbsp;optional&nbsp;epoch&nbsp;size,&nbsp;denoting&nbsp;the&nbsp;number&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;per&nbsp;epoch.&nbsp;If&nbsp;None,&nbsp;an&nbsp;epoch&nbsp;will&nbsp;consist&nbsp;of&nbsp;as&nbsp;many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;as&nbsp;can&nbsp;be&nbsp;made&nbsp;from&nbsp;the&nbsp;dataset.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="training.html#ClassifierTrainer">ClassifierTrainer</a></dd>
+<dd><a href="training.html#Trainer">Trainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ClassifierTrainer-test_batch"><strong>test_batch</strong></a>(self, batch)</dt><dd><tt>Evaluate&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;testing&nbsp;batch.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;batch&nbsp;(iterable):&nbsp;A&nbsp;2-tuple&nbsp;of&nbsp;(images,&nbsp;labels).&nbsp;Images&nbsp;is&nbsp;a&nbsp;4-d<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tensor&nbsp;of&nbsp;shape&nbsp;(BxCxHxW),&nbsp;and&nbsp;labels&nbsp;is&nbsp;a&nbsp;Tensor&nbsp;of&nbsp;2&nbsp;or&nbsp;more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions&nbsp;(BxLx*)&nbsp;which&nbsp;matches&nbsp;images&nbsp;in&nbsp;the&nbsp;first&nbsp;(batch)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimension.&nbsp;The&nbsp;exact&nbsp;dimensionality&nbsp;of&nbsp;labels&nbsp;will&nbsp;depend&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;application&nbsp;and&nbsp;loss&nbsp;function&nbsp;chosen,&nbsp;but&nbsp;often&nbsp;consists<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;integer&nbsp;class-indexes.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;batch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;batch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<dl><dt><a name="ClassifierTrainer-train_batch"><strong>train_batch</strong></a>(self, batch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;training&nbsp;batch.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;batch&nbsp;(iterable):&nbsp;A&nbsp;2-tuple&nbsp;of&nbsp;(images,&nbsp;labels).&nbsp;Images&nbsp;is&nbsp;a&nbsp;4-d<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tensor&nbsp;of&nbsp;shape&nbsp;(BxCxHxW),&nbsp;and&nbsp;labels&nbsp;is&nbsp;a&nbsp;Tensor&nbsp;of&nbsp;2&nbsp;or&nbsp;more<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimensions&nbsp;(BxLx*)&nbsp;which&nbsp;matches&nbsp;images&nbsp;in&nbsp;the&nbsp;first&nbsp;(batch)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dimension.&nbsp;The&nbsp;exact&nbsp;dimensionality&nbsp;of&nbsp;labels&nbsp;will&nbsp;depend&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;application&nbsp;and&nbsp;loss&nbsp;function&nbsp;chosen,&nbsp;but&nbsp;often&nbsp;consists<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;integer&nbsp;class-indexes.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;batch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;batch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="training.html#Trainer">Trainer</a>:<br>
+<dl><dt><a name="ClassifierTrainer-__init__"><strong>__init__</strong></a>(self, net, optim, loss_fn, accuracy_metric, epoch_size=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ClassifierTrainer-eval"><strong>eval</strong></a>(self, dataloader, epoch)</dt><dd><tt>Evaluate&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;testing&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<dl><dt><a name="ClassifierTrainer-train"><strong>train</strong></a>(self, dataloader, epoch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="training.html#Trainer">Trainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Trainer">class <strong>Trainer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Trainer">Trainer</a>(net,&nbsp;optim,&nbsp;loss_fn,&nbsp;accuracy_metric,&nbsp;epoch_size=None)<br>
+&nbsp;<br>
+Base&nbsp;class&nbsp;for&nbsp;all&nbsp;network&nbsp;trainers.&nbsp;Network&nbsp;trainer&nbsp;classes&nbsp;provide&nbsp;<br>
+methods&nbsp;to&nbsp;facilitate&nbsp;training&nbsp;and&nbsp;testing&nbsp;deep&nbsp;network&nbsp;models.&nbsp;The&nbsp;goal<br>
+is&nbsp;to&nbsp;encapsulate&nbsp;the&nbsp;common&nbsp;functionality,&nbsp;to&nbsp;reduce&nbsp;the&nbsp;boilerplate<br>
+code&nbsp;that&nbsp;needs&nbsp;to&nbsp;be&nbsp;repeated&nbsp;across&nbsp;projects.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;net&nbsp;(torch.nn.Module):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a&nbsp;network&nbsp;that&nbsp;inherits&nbsp;from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;torch.nn.Module.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optim&nbsp;(torch.optim.Optimizer):&nbsp;An&nbsp;instance&nbsp;of&nbsp;an&nbsp;optimizer&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inherits&nbsp;from&nbsp;torch.optim.Optimizer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_fn&nbsp;(callable):&nbsp;A&nbsp;callable&nbsp;that&nbsp;calculates&nbsp;and&nbsp;returns&nbsp;a&nbsp;loss<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value.&nbsp;The&nbsp;loss&nbsp;value&nbsp;should&nbsp;be&nbsp;a&nbsp;single-element&nbsp;Tensor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy_metric&nbsp;(callable):&nbsp;A&nbsp;callabel&nbsp;that&nbsp;calculates&nbsp;and&nbsp;returns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;accuracy&nbsp;value.&nbsp;Usually&nbsp;this&nbsp;will&nbsp;be&nbsp;a&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;[0,&nbsp;1].<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch_size&nbsp;(int):&nbsp;An&nbsp;optional&nbsp;epoch&nbsp;size,&nbsp;denoting&nbsp;the&nbsp;number&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;per&nbsp;epoch.&nbsp;If&nbsp;None,&nbsp;an&nbsp;epoch&nbsp;will&nbsp;consist&nbsp;of&nbsp;as&nbsp;many<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;batches&nbsp;as&nbsp;can&nbsp;be&nbsp;made&nbsp;from&nbsp;the&nbsp;dataset.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Trainer-__init__"><strong>__init__</strong></a>(self, net, optim, loss_fn, accuracy_metric, epoch_size=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Trainer-eval"><strong>eval</strong></a>(self, dataloader, epoch)</dt><dd><tt>Evaluate&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;testing&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<dl><dt><a name="Trainer-test_batch"><strong>test_batch</strong></a>(self, batch)</dt><dd><tt>Test&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;testing&nbsp;batch.</tt></dd></dl>
+
+<dl><dt><a name="Trainer-train"><strong>train</strong></a>(self, dataloader, epoch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dataloader&nbsp;(torch.utils.data.DataLoader):&nbsp;An&nbsp;instance&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataLoader,&nbsp;which&nbsp;will&nbsp;provide&nbsp;access&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;loss&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;accuracy&nbsp;over&nbsp;the&nbsp;epoch&nbsp;(in&nbsp;[0,&nbsp;1]).</tt></dd></dl>
+
+<dl><dt><a name="Trainer-train_batch"><strong>train_batch</strong></a>(self, batch)</dt><dd><tt>Train&nbsp;the&nbsp;<a href="#Trainer">Trainer</a>'s&nbsp;network&nbsp;on&nbsp;a&nbsp;single&nbsp;training&nbsp;batch.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

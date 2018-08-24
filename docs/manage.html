@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module manage</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>manage</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/catalys1/projects/research/dnnutil/dnnutil/manage.py">/home/catalys1/projects/research/dnnutil/dnnutil/manage.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="json.html">json</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="torch.html">torch</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#Exception">builtins.Exception</a>(<a href="builtins.html#BaseException">builtins.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="manage.html#RunException">RunException</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="manage.html#Checkpointer">Checkpointer</a>
+</font></dt><dt><font face="helvetica, arial"><a href="manage.html#Manager">Manager</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Checkpointer">class <strong>Checkpointer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>The&nbsp;<a href="#Checkpointer">Checkpointer</a>&nbsp;class&nbsp;handles&nbsp;saving&nbsp;model&nbsp;checkpoints.&nbsp;It&nbsp;can&nbsp;be&nbsp;set<br>
+to&nbsp;save&nbsp;model&nbsp;weights&nbsp;periodically,&nbsp;keeping&nbsp;multiple&nbsp;copies&nbsp;or&nbsp;a&nbsp;single<br>
+most&nbsp;recent&nbsp;copy,&nbsp;as&nbsp;well&nbsp;as&nbsp;keeping&nbsp;a&nbsp;seperate&nbsp;checkpoint&nbsp;of&nbsp;the<br>
+best-so-far&nbsp;weights&nbsp;according&nbsp;to&nbsp;a&nbsp;metric.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;checkpoint_dir&nbsp;(str&nbsp;or&nbsp;Path):&nbsp;Directory&nbsp;to&nbsp;save&nbsp;checkpoints&nbsp;in.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_multi&nbsp;(bool):&nbsp;When&nbsp;True,&nbsp;a&nbsp;new&nbsp;checkpoint&nbsp;file&nbsp;will&nbsp;be&nbsp;created<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;each&nbsp;time&nbsp;a&nbsp;checkpoint&nbsp;is&nbsp;saved.&nbsp;Otherwise&nbsp;the&nbsp;previous&nbsp;checkpoint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;be&nbsp;overwritten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;period&nbsp;(int):&nbsp;How&nbsp;often&nbsp;to&nbsp;save&nbsp;a&nbsp;new&nbsp;checkpoint&nbsp;(in&nbsp;epochs).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default:&nbsp;1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_best&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;saves&nbsp;a&nbsp;seperate&nbsp;checkpoint&nbsp;that&nbsp;is&nbsp;updated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;the&nbsp;best&nbsp;model&nbsp;weights&nbsp;so&nbsp;far.&nbsp;Default:&nbsp;True.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric&nbsp;(str):&nbsp;Metric&nbsp;used&nbsp;to&nbsp;measure&nbsp;model&nbsp;performance.&nbsp;Can&nbsp;be&nbsp;one&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"loss",&nbsp;"accuracy"}.&nbsp;Default:&nbsp;"loss".<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Checkpointer-__init__"><strong>__init__</strong></a>(self, checkpoint_dir, save_multi=False, period=1, save_best=True, metric='loss')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Checkpointer-checkpoint"><strong>checkpoint</strong></a>(self, model, val=None, epoch=None)</dt><dd><tt>Save&nbsp;model&nbsp;weights&nbsp;in&nbsp;a&nbsp;checkpoint&nbsp;file.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model&nbsp;(torch.nn.Module):&nbsp;The&nbsp;network&nbsp;for&nbsp;which&nbsp;to&nbsp;save&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val&nbsp;(float):&nbsp;Value&nbsp;of&nbsp;the&nbsp;metric&nbsp;being&nbsp;used&nbsp;to&nbsp;determine&nbsp;the&nbsp;best<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.&nbsp;Default:&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;Most&nbsp;recently&nbsp;processed&nbsp;epoch.&nbsp;Used&nbsp;to&nbsp;postscript<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checkpoint&nbsp;files&nbsp;when&nbsp;save_multi&nbsp;is&nbsp;True.&nbsp;Default:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Manager">class <strong>Manager</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>The&nbsp;<a href="#Manager">Manager</a>&nbsp;class&nbsp;provides&nbsp;an&nbsp;interface&nbsp;for&nbsp;managing&nbsp;where&nbsp;output&nbsp;files<br>
+are&nbsp;stored&nbsp;for&nbsp;a&nbsp;given&nbsp;run.&nbsp;This&nbsp;makes&nbsp;it&nbsp;easy&nbsp;to&nbsp;keep&nbsp;all&nbsp;output,&nbsp;logs,<br>
+checkpoints,&nbsp;etc.&nbsp;together&nbsp;in&nbsp;one&nbsp;location&nbsp;--&nbsp;particularly&nbsp;when&nbsp;running<br>
+multiple&nbsp;experiments.&nbsp;<br>
+&nbsp;<br>
+The&nbsp;output&nbsp;of&nbsp;different&nbsp;runs&nbsp;are&nbsp;saved&nbsp;in&nbsp;numbered&nbsp;folders&nbsp;(starting&nbsp;from<br>
+1).&nbsp;These&nbsp;are&nbsp;saved&nbsp;under&nbsp;a&nbsp;root&nbsp;runs&nbsp;folder.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;root&nbsp;(str&nbsp;or&nbsp;Path):&nbsp;Path&nbsp;to&nbsp;root&nbsp;folder&nbsp;where&nbsp;run&nbsp;data&nbsp;will&nbsp;be&nbsp;saved.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default:&nbsp;"./runs/".<br>
+&nbsp;&nbsp;&nbsp;&nbsp;run_num&nbsp;(int):&nbsp;A&nbsp;numeric&nbsp;identifier&nbsp;for&nbsp;the&nbsp;run.&nbsp;If&nbsp;0,&nbsp;it&nbsp;will&nbsp;be&nbsp;set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;1&nbsp;greater&nbsp;than&nbsp;the&nbsp;largest&nbsp;existing&nbsp;run&nbsp;id.&nbsp;If&nbsp;None,&nbsp;no&nbsp;new&nbsp;run<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;be&nbsp;created&nbsp;--&nbsp;this&nbsp;will&nbsp;have&nbsp;to&nbsp;be&nbsp;done&nbsp;later&nbsp;with&nbsp;a&nbsp;call&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set_run.&nbsp;Default:&nbsp;None.<br>
+&nbsp;<br>
+Kwargs:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;enforce_exists&nbsp;(bool):&nbsp;If&nbsp;True&nbsp;and&nbsp;run_num&nbsp;is&nbsp;something&nbsp;other&nbsp;than&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;None,&nbsp;a&nbsp;<a href="#RunException">RunException</a>&nbsp;will&nbsp;be&nbsp;raised&nbsp;if&nbsp;a&nbsp;run&nbsp;for&nbsp;run_num&nbsp;does<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;already&nbsp;exist.&nbsp;Default:&nbsp;True.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;create_ok&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;allows&nbsp;the&nbsp;<a href="#Manager">Manager</a>&nbsp;to&nbsp;create&nbsp;the&nbsp;directory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;given&nbsp;by&nbsp;`root`,&nbsp;including&nbsp;all&nbsp;intermediate&nbsp;directories,&nbsp;if&nbsp;any.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default:&nbsp;True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Manager-__init__"><strong>__init__</strong></a>(self, root='./runs/', run_num=None, **kwargs)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Manager-load_state"><strong>load_state</strong></a>(self, args, match_model_epoch=False, use_best=False, restore_lr=True)</dt><dd><tt>Restore&nbsp;the&nbsp;state&nbsp;of&nbsp;training&nbsp;at&nbsp;the&nbsp;time&nbsp;it&nbsp;finished&nbsp;or&nbsp;was<br>
+interrupted.&nbsp;If&nbsp;args.resume&nbsp;is&nbsp;False,&nbsp;this&nbsp;simply&nbsp;return&nbsp;args.<br>
+Otherwise,&nbsp;it&nbsp;changes&nbsp;the&nbsp;values&nbsp;in&nbsp;args&nbsp;to&nbsp;reflect&nbsp;the&nbsp;saved&nbsp;state,<br>
+then&nbsp;returns&nbsp;it.&nbsp;Note&nbsp;that&nbsp;this&nbsp;only&nbsp;affects&nbsp;args&nbsp;-&nbsp;this&nbsp;will&nbsp;not<br>
+restore&nbsp;the&nbsp;state&nbsp;of&nbsp;the&nbsp;momentum&nbsp;variables&nbsp;in&nbsp;the&nbsp;optimizer,&nbsp;for<br>
+instance.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;(Namespace):&nbsp;A&nbsp;Namespace&nbsp;<a href="builtins.html#object">object</a>,&nbsp;presumably&nbsp;created&nbsp;by&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;argument&nbsp;parser.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;match_model_epoch&nbsp;(bool):&nbsp;When&nbsp;True,&nbsp;tries&nbsp;to&nbsp;set&nbsp;the&nbsp;starting<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;based&nbsp;on&nbsp;the&nbsp;filename&nbsp;of&nbsp;the&nbsp;most&nbsp;recently&nbsp;saved&nbsp;weight<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checkpoint.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;use_best&nbsp;(bool):&nbsp;Restore&nbsp;the&nbsp;model&nbsp;weights&nbsp;from&nbsp;the&nbsp;best-so-far<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;checkpoint.&nbsp;This&nbsp;is&nbsp;mutually&nbsp;exclusive&nbsp;with&nbsp;match_model_epoch,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;will&nbsp;be&nbsp;ignored&nbsp;when&nbsp;use_best&nbsp;is&nbsp;set&nbsp;True.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;restore_lr&nbsp;(bool):&nbsp;When&nbsp;True,&nbsp;the&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;set&nbsp;to&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lr&nbsp;saved&nbsp;in&nbsp;the&nbsp;state&nbsp;file.&nbsp;Otherwise,&nbsp;it&nbsp;will&nbsp;remain&nbsp;set&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whatever&nbsp;was&nbsp;passed&nbsp;in&nbsp;through&nbsp;args.</tt></dd></dl>
+
+<dl><dt><a name="Manager-save_state"><strong>save_state</strong></a>(self, epoch_num, lr, **kwargs)</dt><dd><tt>Save&nbsp;some&nbsp;minimal&nbsp;state&nbsp;about&nbsp;the&nbsp;run&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;easily<br>
+continued&nbsp;in&nbsp;the&nbsp;case&nbsp;of&nbsp;interruption&nbsp;or&nbsp;desire&nbsp;to&nbsp;train&nbsp;longer.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch_num&nbsp;(int):&nbsp;Index&nbsp;of&nbsp;last&nbsp;epoch&nbsp;of&nbsp;training&nbsp;completed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr&nbsp;(float):&nbsp;Last&nbsp;learning&nbsp;rate&nbsp;used.<br>
+&nbsp;<br>
+Kwargs:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None&nbsp;currently.</tt></dd></dl>
+
+<dl><dt><a name="Manager-set_description"><strong>set_description</strong></a>(self, description='', overwrite=False)</dt><dd><tt>Writes&nbsp;a&nbsp;description&nbsp;to&nbsp;description.txt&nbsp;in&nbsp;the&nbsp;run&nbsp;folder.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;description&nbsp;(str):&nbsp;A&nbsp;textual&nbsp;description&nbsp;of&nbsp;this&nbsp;run.&nbsp;This&nbsp;can<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;anything&nbsp;that&nbsp;you&nbsp;would&nbsp;want&nbsp;to&nbsp;know&nbsp;or&nbsp;remember&nbsp;about&nbsp;this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run,&nbsp;such&nbsp;as&nbsp;how&nbsp;it&nbsp;differs&nbsp;from&nbsp;other&nbsp;runs.&nbsp;If&nbsp;the&nbsp;description<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;empty&nbsp;or&nbsp;None,&nbsp;the&nbsp;user&nbsp;will&nbsp;be&nbsp;prompted&nbsp;to&nbsp;enter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;description&nbsp;at&nbsp;the&nbsp;prompt.&nbsp;Default:&nbsp;""&nbsp;(empty).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;overwrite&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;overwrite&nbsp;description.txt&nbsp;(if&nbsp;it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exists).&nbsp;Otherwise,&nbsp;append&nbsp;to&nbsp;it.&nbsp;Default:&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="Manager-set_run"><strong>set_run</strong></a>(self, run_num=0, enforce_exists=True)</dt><dd><tt>Set&nbsp;up&nbsp;the&nbsp;directory&nbsp;for&nbsp;this&nbsp;run.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;run_num&nbsp;(int):&nbsp;The&nbsp;run&nbsp;id&nbsp;number.&nbsp;If&nbsp;0,&nbsp;it&nbsp;gets&nbsp;overwritten&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;next&nbsp;available&nbsp;run&nbsp;id.&nbsp;Default:&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;enforce_exists&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;and&nbsp;run_id&nbsp;is&nbsp;not&nbsp;0,&nbsp;then&nbsp;raises<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;<a href="#RunException">RunException</a>&nbsp;if&nbsp;the&nbsp;run&nbsp;directory&nbsp;does&nbsp;not&nbsp;already&nbsp;exist.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default:&nbsp;True.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RunException">class <strong>RunException</strong></a>(<a href="builtins.html#Exception">builtins.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RunException">RunException</a>&nbsp;is&nbsp;raised&nbsp;when&nbsp;trying&nbsp;to&nbsp;resume&nbsp;from&nbsp;a&nbsp;run&nbsp;that&nbsp;does&nbsp;not<br>
+exist.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="manage.html#RunException">RunException</a></dd>
+<dd><a href="builtins.html#Exception">builtins.Exception</a></dd>
+<dd><a href="builtins.html#BaseException">builtins.BaseException</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="builtins.html#Exception">builtins.Exception</a>:<br>
+<dl><dt><a name="RunException-__init__"><strong>__init__</strong></a>(self, /, *args, **kwargs)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="RunException-__new__"><strong>__new__</strong></a>(*args, **kwargs)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Create&nbsp;and&nbsp;return&nbsp;a&nbsp;new&nbsp;<a href="builtins.html#object">object</a>.&nbsp;&nbsp;See&nbsp;help(type)&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><a name="RunException-__delattr__"><strong>__delattr__</strong></a>(self, name, /)</dt><dd><tt>Implement&nbsp;delattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="RunException-__getattribute__"><strong>__getattribute__</strong></a>(self, name, /)</dt><dd><tt>Return&nbsp;getattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="RunException-__reduce__"><strong>__reduce__</strong></a>(...)</dt><dd><tt>helper&nbsp;for&nbsp;pickle</tt></dd></dl>
+
+<dl><dt><a name="RunException-__repr__"><strong>__repr__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<dl><dt><a name="RunException-__setattr__"><strong>__setattr__</strong></a>(self, name, value, /)</dt><dd><tt>Implement&nbsp;setattr(self,&nbsp;name,&nbsp;value).</tt></dd></dl>
+
+<dl><dt><a name="RunException-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="RunException-__str__"><strong>__str__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="RunException-with_traceback"><strong>with_traceback</strong></a>(...)</dt><dd><tt><a href="builtins.html#Exception">Exception</a>.<a href="#RunException-with_traceback">with_traceback</a>(tb)&nbsp;--<br>
+set&nbsp;self.<strong>__traceback__</strong>&nbsp;to&nbsp;tb&nbsp;and&nbsp;return&nbsp;self.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><strong>__cause__</strong></dt>
+<dd><tt>exception&nbsp;cause</tt></dd>
+</dl>
+<dl><dt><strong>__context__</strong></dt>
+<dd><tt>exception&nbsp;context</tt></dd>
+</dl>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>__suppress_context__</strong></dt>
+</dl>
+<dl><dt><strong>__traceback__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

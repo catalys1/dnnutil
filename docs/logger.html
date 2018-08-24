@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module logger</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>logger</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/catalys1/projects/research/dnnutil/dnnutil/logger.py">/home/catalys1/projects/research/dnnutil/dnnutil/logger.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="logger.html#TextLog">TextLog</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TextLog">class <strong>TextLog</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TextLog">TextLog</a>(filepath,&nbsp;console=True,&nbsp;create_ok=True)<br>
+&nbsp;<br>
+The&nbsp;<a href="#TextLog">TextLog</a>&nbsp;logger&nbsp;logs&nbsp;per-epoch&nbsp;information&nbsp;in&nbsp;a&nbsp;human-readable&nbsp;way<br>
+to&nbsp;a&nbsp;simple&nbsp;text&nbsp;file,&nbsp;and&nbsp;optionally&nbsp;to&nbsp;the&nbsp;command&nbsp;line.<br>
+&nbsp;<br>
+The&nbsp;output&nbsp;has&nbsp;the&nbsp;following&nbsp;form:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"Epoch&nbsp;E&nbsp;(lr=LR,&nbsp;time=T):&nbsp;Train&nbsp;[loss&nbsp;(acc)]&nbsp;&nbsp;Val&nbsp;[loss&nbsp;(acc)]&nbsp;&nbsp;"<br>
+&nbsp;<br>
+where&nbsp;E&nbsp;is&nbsp;the&nbsp;epoch&nbsp;number,&nbsp;LR&nbsp;is&nbsp;the&nbsp;current&nbsp;learning&nbsp;rate,&nbsp;and&nbsp;T&nbsp;is<br>
+running&nbsp;time&nbsp;for&nbsp;both&nbsp;training&nbsp;and&nbsp;evaluation.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(str&nbsp;or&nbsp;Path):&nbsp;Path&nbsp;to&nbsp;the&nbsp;log&nbsp;file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;console&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;print&nbsp;log&nbsp;information&nbsp;to&nbsp;the&nbsp;commandline.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default:&nbsp;True.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;create_ok&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;allows&nbsp;the&nbsp;creation&nbsp;of&nbsp;any&nbsp;missing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;folders&nbsp;along&nbsp;the&nbsp;path&nbsp;to&nbsp;logfile.&nbsp;Default:&nbsp;True.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TextLog-__init__"><strong>__init__</strong></a>(self, filepath, console=True, create_ok=True)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TextLog-log"><strong>log</strong></a>(self, epoch, time, train_loss=0, train_acc=0, test_loss=0, test_acc=0, lr=None)</dt><dd><tt>Append&nbsp;to&nbsp;the&nbsp;log&nbsp;file,&nbsp;and&nbsp;optionally&nbsp;print&nbsp;to&nbsp;the&nbsp;console.<br>
+Accepts&nbsp;the&nbsp;current&nbsp;epoch&nbsp;number,&nbsp;execution&nbsp;time&nbsp;for&nbsp;the&nbsp;epoch,<br>
+values&nbsp;for&nbsp;the&nbsp;training&nbsp;and&nbsp;test&nbsp;loss&nbsp;and&nbsp;accuracy,&nbsp;and&nbsp;optionally<br>
+the&nbsp;value&nbsp;of&nbsp;the&nbsp;learning&nbsp;rate&nbsp;that&nbsp;was&nbsp;used.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;Epoch&nbsp;number.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;time&nbsp;(float):&nbsp;Elapsed&nbsp;time&nbsp;over&nbsp;the&nbsp;epoch.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;train_loss&nbsp;(float):&nbsp;Loss&nbsp;measured&nbsp;across&nbsp;the&nbsp;training&nbsp;set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;train_acc&nbsp;(float):&nbsp;Accuracy&nbsp;measured&nbsp;across&nbsp;the&nbsp;training&nbsp;set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_loss&nbsp;(float):&nbsp;Loss&nbsp;measured&nbsp;across&nbsp;the&nbsp;test/validation&nbsp;set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;test_acc&nbsp;(float):&nbsp;Accuracy&nbsp;measured&nbsp;across&nbsp;the&nbsp;test/validation&nbsp;set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr&nbsp;(float):&nbsp;The&nbsp;learning&nbsp;rate.</tt></dd></dl>
+
+<dl><dt><a name="TextLog-text"><strong>text</strong></a>(self, text)</dt><dd><tt>Append&nbsp;arbitrary&nbsp;text&nbsp;to&nbsp;the&nbsp;log&nbsp;file.&nbsp;Useful&nbsp;for&nbsp;keeping&nbsp;notes<br>
+when&nbsp;starting&nbsp;a&nbsp;new&nbsp;run&nbsp;or&nbsp;resuming&nbsp;a&nbsp;stopped&nbsp;run.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;text&nbsp;(str):&nbsp;Text&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;log&nbsp;file.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
