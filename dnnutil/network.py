@@ -19,7 +19,7 @@ def tocuda(seq):
     return seq
 
 
-def load_model(model_class, checkpoint=None, strict=False, **kwargs):
+def load_model(model_class, checkpoint=None, strict=False, cpu=False, **kwargs):
     '''Instantiates a deep network model and optionally loads weights from
     a checkpoint file. If cuda GPUs are available, the model will be converted
     via .cuda(). If multiple GPUs are available, the model will be loaded on
@@ -36,6 +36,8 @@ def load_model(model_class, checkpoint=None, strict=False, **kwargs):
             should be performed strictly. This value is passed to
             net.load_state_dict in the event that a checkpoint is to be
             loaded. Default: False.
+        cpu (bool): Boolean used to force the model to be on the CPU, even
+            if a GPU is available. Default: False.
 
     Any other named arguments will be passed to model_class constructor.
 
@@ -45,10 +47,11 @@ def load_model(model_class, checkpoint=None, strict=False, **kwargs):
     '''
     print('Loading network...')
     net = model_class(**kwargs)
-    if torch.cuda.is_available():
+    cuda = torch.cuda.is_available() and not cpu
+    if cuda:
         net = net.cuda()
     if checkpoint:
-        if torch.cuda.is_available():
+        if cuda:
             params = torch.load(checkpoint)
         else:
             # Convert weights saved from GPU to compatible CPU weights

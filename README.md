@@ -65,8 +65,8 @@ def main():
         t = time.time() - start
         lr = optim.param_groups[-1]['lr']
         # log and checkpoint at the end of an epoch
-        log.log(e, t, train_loss, train_acc, test_loss, test_acc, lr)
-        check.checkpoint(net, test_loss, e)
+        logger.log(e, t, train_loss, train_acc, test_loss, test_acc, lr)
+        checkpointer.checkpoint(net, test_loss, e)
 
 
 if __name__ == '__main__':

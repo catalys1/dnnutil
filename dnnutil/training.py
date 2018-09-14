@@ -144,7 +144,6 @@ class ClassifierTrainer(Trainer):
         self.optim.zero_grad()
 
         imgs, labels = network.tocuda(batch)
-        imgs.requires_grad_()
 
         predictions = self.net(imgs)
         loss = self.loss_fn(predictions, labels)
@@ -216,7 +215,6 @@ class AutoencoderTrainer(Trainer):
         self.optim.zero_grad()
 
         imgs = network.tocuda(batch)
-        imgs.requires_grad_()
 
         predictions = self.net(imgs)
         loss = self.loss_fn(predictions, imgs)
