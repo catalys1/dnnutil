@@ -3,6 +3,26 @@ import numpy as np
 import dnnutil.network as network
 
 
+def calculate_accuracy(prediction, label, axis=1):
+    '''accuracy(prediction, label)
+    
+    Computes the mean accuracy over a batch of predictions and corresponding
+    ground-truth labels.
+
+    Args:
+        prediction (Tensor): A batch of predictions. Assumed to have shape
+            [batch-size, nclasses, [d0, d1, ...]].
+        label (LongTensor): A batch of labels. Assumed to have shape
+            [batch-size, [d0, d1, ...]]). The number of dimensions should be
+            one less than prediction.
+
+    Returns:
+        accuracy (Tensor): A single-element Tensor containing the percent of
+            correct predictions in the batch as a value between 0 and 1.
+    '''
+    return torch.eq(prediction.argmax(axis), label).float().mean()
+
+
 class Trainer(object):
     '''Trainer(net, optim, loss_fn, accuracy_metric, epoch_size=None)
     
@@ -73,7 +93,8 @@ class Trainer(object):
             accuracy (float): The mean accuracy over the epoch (in [0, 1]).
         '''
         if self.epoch_size is None:
-            N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
+            #N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
+            N = len(dataloader.batch_sampler)
         else:
             N = self.epoch_size
         msg = 'train' if self.net.training else 'test'

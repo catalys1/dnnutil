@@ -27,7 +27,7 @@ def basic_parser(description='', **kwargs):
 
     a = parser.add_argument('--lr', type=float, default=lr, 
         help=f'Learning rate. Default: {lr}.')
-    a = parser.add_argument('--batch_size', type=int, default=batch_size,
+    a = parser.add_argument('--batch-size', type=int, default=batch_size,
         help=f'Batch size. Default: {batch_size}.')
     a = parser.add_argument('--epochs', type=int, default=epochs,
         help=f'Number of epochs to train for. Default: {epochs}.')

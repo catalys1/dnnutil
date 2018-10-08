@@ -1,5 +1,6 @@
 import torch
 from pathlib import Path
+import shutil
 
 
 def tocuda(seq):
@@ -75,7 +76,7 @@ def save_model(net, path):
     # parameters directly will result in a checkpoint that can only be
     # loaded by a distributed network. By stripping off the 'module.' from
     # the parameter names, the weights can be loaded onto a non-distributed
-    # model (which can then be distrbuted if desired).
+    # model (which can then be distributed if desired).
     if next(iter(params.keys())).startswith('module.'):
         from collections import OrderedDict
         new_dict = OrderedDict()
@@ -107,13 +108,17 @@ class Checkpointer(object):
     def checkpoint(self, model, val=None, epoch=None):
         '''TODO
         '''
+        model_path = self.path / 'model_weights'
+        save_model(model, model_path)
         if self.save_best:
             if val is not None and self.compare(val, self.best):
                 self.best = val
-                save_model(model, self.path / 'best_model')
+                best_path = self.path / 'best_model'
+                shutil.copy(model_path, best_path)
+                # save_model(model, self.path / 'best_model')
         if self.save_multi:
             if (epoch is not None) and (epoch % self.period == 0):
-                save_model(model, self.path / f'model_weights_{epoch}')
-        else:   
-            save_model(model, self.path / f'model_weights')
+                curr_path = self.path / f'model_weights_{epoch}'
+                shutil.copy(model_path, curr_path)
+                # save_model(model, self.path / f'model_weights_{epoch}')
 

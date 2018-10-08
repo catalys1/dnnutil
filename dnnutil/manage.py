@@ -1,7 +1,7 @@
 import torch
 from pathlib import Path
 import json
-import re
+import shutil
 from dnnutil.network import save_model
 
 
@@ -37,7 +37,7 @@ class Checkpointer(object):
             self.compare = lambda x, y: x < y
         elif metric == 'accuracy':
             self.best = 0
-            self.compare = lambda x, y: x > y
+            self.compaee = lambda x, y: x > y
 
     def checkpoint(self, model, val=None, epoch=None):
         '''Save model weights in a checkpoint file.
@@ -49,15 +49,19 @@ class Checkpointer(object):
             epoch (int): Most recently processed epoch. Used to postscript
                 checkpoint files when save_multi is True. Default: None.
         '''
+        model_path = self.path / 'model_weights'
+        save_model(model, model_path)
         if self.save_best:
             if val is not None and self.compare(val, self.best):
                 self.best = val
-                save_model(model, self.path / 'best_model')
+                best_path = self.path / 'best_model'
+                shutil.copy(model_path, best_path)
+                # save_model(model, self.path / 'best_model')
         if self.save_multi:
-            if (epoch is not None) and (epoch % self.period == self.period - 1):
-                save_model(model, self.path / f'model_weights_{epoch}')
-        else:   
-            save_model(model, self.path / f'model_weights')
+            if (epoch is not None) and (epoch % self.period == 0):
+                curr_path = self.path / f'model_weights_{epoch}'
+                shutil.copy(model_path, curr_path)
+                # save_model(model, self.path / f'model_weights_{epoch}')
 
 
 class RunException(Exception):
