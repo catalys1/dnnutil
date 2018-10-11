@@ -1,7 +1,7 @@
 from .cmdopts import basic_parser
 from .logger import TextLog
 from .network import tocuda, load_model, save_model
-from .training import Trainer, ClassifierTrainer, AutoencoderTrainer
+from .training import Trainer, ClassifierTrainer, AutoencoderTrainer, calculate_accuracy
 from .manage import Checkpointer, Manager
 from .optim import EpochSetLR
 
