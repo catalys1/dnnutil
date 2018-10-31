@@ -177,6 +177,7 @@ class ClassifierTrainer(Trainer):
             accuracy = self.measure_accuracy(predictions, labels)
         return loss, accuracy
 
+    @torch.no_grad()
     def test_batch(self, batch):
         '''Evaluate the Trainer's network on a single testing batch.
 
@@ -191,11 +192,10 @@ class ClassifierTrainer(Trainer):
             loss (float): The mean loss over the batch.
             accuracy (float): The mean accuracy over the batch (in [0, 1]).
         '''
-        with torch.no_grad():
-            imgs, labels = network.tocuda(batch)
-            predictions = self.net(imgs)
-            loss = self.loss_fn(predictions, labels).item()
-            accuracy = self.measure_accuracy(predictions, labels)
+        imgs, labels = network.tocuda(batch)
+        predictions = self.net(imgs)
+        loss = self.loss_fn(predictions, labels).item()
+        accuracy = self.measure_accuracy(predictions, labels)
         return loss, accuracy
 
 
@@ -247,6 +247,7 @@ class AutoencoderTrainer(Trainer):
 
         return loss
 
+    @torch.no_grad()
     def test_batch(self, batch):
         '''Evaluate the Trainer's network on a single testing batch.
 
@@ -260,10 +261,9 @@ class AutoencoderTrainer(Trainer):
         Returns:
             loss (float): The mean loss over the batch.
         '''
-        with torch.no_grad():
-            imgs = network.tocuda(batch)
-            predictions = self.net(imgs)
-            loss = self.loss_fn(predictions, imgs).item()
+        imgs = network.tocuda(batch)
+        predictions = self.net(imgs)
+        loss = self.loss_fn(predictions, imgs).item()
         return loss
 
     def _run_epoch(self, dataloader, epoch):
