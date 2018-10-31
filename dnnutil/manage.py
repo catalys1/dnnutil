@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import shutil
 from dnnutil.network import save_model
+from dnnutil.logger import TextLog
 
 
 class Checkpointer(object):
@@ -37,7 +38,7 @@ class Checkpointer(object):
             self.compare = lambda x, y: x < y
         elif metric == 'accuracy':
             self.best = 0
-            self.compaee = lambda x, y: x > y
+            self.compare = lambda x, y: x > y
 
     def checkpoint(self, model, val=None, epoch=None):
         '''Save model weights in a checkpoint file.
@@ -95,17 +96,25 @@ class Manager(object):
         create_ok (bool): If True, allows the Manager to create the directory
             given by `root`, including all intermediate directories, if any.
             Default: True.
+
+    Additional keyword arguments will be passed to the constructor of
+    Checkpointer.
     '''
     def __init__(self, root='./runs/', run_num=None, **kwargs):
         self.root = Path(root)
 
-        create_ok = kwargs.get('create_ok', True)
+        create_ok = kwargs.pop('create_ok', True)
         if create_ok:
             self.root.mkdir(parents=True, exist_ok=True)
 
-        if run_num is not None:
-            enforce_exists = kwargs.get('enforce_exists', True)
+        enforce_exists = kwargs.pop('enforce_exists', True)
+        if run_num is None:
+            self.run_dir = self.root
+        else:
             self.set_run(run_num, enforce_exists)
+
+        self.checkpointer = Checkpointer(self.run_dir, **kwargs)
+        self.logger = TextLog(self.run_dir / 'log.txt')
 
     def set_run(self, run_num=0, enforce_exists=True):
         '''Set up the directory for this run.
@@ -167,6 +176,38 @@ class Manager(object):
                 description = input('Enter a description:\n')
             if description:
                 print(description, file=fp)
+
+    def log(self, epoch, time, train_loss=0, train_acc=0, test_loss=0,
+            test_acc=0, lr=None):
+        '''TODO
+        '''
+        self.logger.log(epoch, time, train_loss, train_acc,
+                        test_loss, test_acc, lr)
+
+    def log_text(self, text):
+        '''TODO
+        '''
+        self.logger.text(text)
+
+    def checkpoint(self, model, val=None, epoch=None):
+        '''TODO
+        '''
+        self.checkpointer.checkpoint(model, val, epoch)
+
+    def epoch_save(self, net, epoch, time, lr, train_loss=0, train_acc=0,
+                   test_loss=0, test_acc=0):
+        '''Save and log at the end of an epoch.
+
+        Convenience method for taking care of all the end-of-epoch
+        bookkeeping: writing log info, saving state, saving model
+        checkpoints.
+
+        Args:
+            TODO
+        '''
+        self.log(epoch, time, train_loss, train_acc, test_loss, test_acc, lr)
+        self.save_state(epoch, lr)
+        self.checkpoint(net, test_loss, epoch)
 
     def save_state(self, epoch_num, lr, **kwargs):
         '''Save some minimal state about the run so that it can be easily
