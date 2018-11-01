@@ -52,6 +52,29 @@ class Trainer(object):
         self.measure_accuracy = accuracy_metric
         self.epoch_size = epoch_size
 
+        self.train_loss = 0.
+        self.train_acc = 0.
+        self.test_loss = 0.
+        self.test_acc = 0.
+        
+    def _set_train_stats(self, stats):
+        '''TODO:docs
+        '''
+        self.train_loss = stats[0]
+        self.train_acc = stats[1]
+
+    def _set_test_stats(self, stats):
+        '''TODO:docs
+        '''
+        self.test_loss = stats[0]
+        self.test_acc = stats[1]
+
+    def get_stats(self):
+        '''TODO:docs
+        '''
+        return (self.train_loss, self.train_acc,
+                self.test_loss, self.test_acc)
+
     def train(self, dataloader, epoch):
         '''Train the Trainer's network.
 
@@ -65,7 +88,9 @@ class Trainer(object):
             accuracy (float): The mean accuracy over the epoch (in [0, 1]).
         '''
         self.net.train()
-        return self._run_epoch(dataloader, epoch)
+        stats = self._run_epoch(dataloader, epoch)
+        self._set_train_stats(stats)
+        return stats
 
     def eval(self, dataloader, epoch):
         '''Evaluate the Trainer's network.
@@ -79,7 +104,9 @@ class Trainer(object):
             accuracy (float): The mean accuracy over the epoch (in [0, 1]).
         '''
         self.net.eval()
-        return self._run_epoch(dataloader, epoch)
+        stats = self._run_epoch(dataloader, epoch)
+        self._set_test_stats(stats)
+        return stats
         
     def _run_epoch(self, dataloader, epoch):
         '''Perform a single epoch of either training or evaluation.
