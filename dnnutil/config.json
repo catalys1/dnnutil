@@ -1,9 +1,21 @@
 {
     "network": {
-
+        "module": "",
+        "model": "",
+        "kwargs": {
+        }
     },
     "dataset": {
-
+        "module": "",
+        "dataset": "",
+        "kwargs": {
+        }
+    },
+    "loss": {
+        "module": "",
+        "loss": "",
+        "kwargs": {
+        }
     },
     "hyperparams": {
 
