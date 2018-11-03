@@ -3,6 +3,9 @@ import numpy as np
 import dnnutil.network as network
 
 
+__all__ = ['calculate_accuracy', 'Trainer', 'ClassifierTrainer', 'AutoencoderTrainer']
+
+
 def calculate_accuracy(prediction, label, axis=1):
     '''accuracy(prediction, label)
     

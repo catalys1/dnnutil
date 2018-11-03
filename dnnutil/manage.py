@@ -6,6 +6,9 @@ from dnnutil.network import save_model
 from dnnutil.logger import TextLog
 
 
+__all__ = ['Checkpointer', 'RunException', 'Manager']
+
+
 class Checkpointer(object):
     '''The Checkpointer class handles saving model checkpoints. It can be set
     to save model weights periodically, keeping multiple copies or a single

@@ -1,6 +1,9 @@
 from pathlib import Path
 
 
+__all__ = ['TextLog']
+
+
 class TextLog(object):
     '''TextLog(filepath, console=True, create_ok=True)
 

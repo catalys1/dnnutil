@@ -3,11 +3,14 @@ from pathlib import Path
 import shutil
 
 
+__all__ = ['tocuda', 'load_model', 'save_model']
+
+
 def tocuda(seq):
     '''Convert all Tensors in seq to CUDA Tensors.
     
     Args:
-        seq (iterable): A sequence of Tensors.
+        seq (Tensor or iterable): A Tensor or sequence of Tensors.
 
     Returns:
         A sequence of CUDA Tensors, matching the input sequence.
@@ -84,41 +87,4 @@ def save_model(net, path):
             new_dict[k[7:]] = v
         params = new_dict
     torch.save(params, path)
-
-
-class Checkpointer(object):
-    '''TODO
-    '''
-    def __init__(self, checkpoint_dir, save_multi=False, period=1, 
-                 save_best=True, metric='loss'):
-        self.path = Path(checkpoint_dir)
-
-        self.save_multi = save_multi
-        if self.save_multi:
-            self.period = period
-
-        self.save_best = save_best
-        if metric == 'loss':
-            self.best = 1e8
-            self.compare = lambda x, y: x < y
-        elif metric == 'accuracy':
-            self.best = 0
-            self.compare = lambda x, y: x > y
-
-    def checkpoint(self, model, val=None, epoch=None):
-        '''TODO
-        '''
-        model_path = self.path / 'model_weights'
-        save_model(model, model_path)
-        if self.save_best:
-            if val is not None and self.compare(val, self.best):
-                self.best = val
-                best_path = self.path / 'best_model'
-                shutil.copy(model_path, best_path)
-                # save_model(model, self.path / 'best_model')
-        if self.save_multi:
-            if (epoch is not None) and (epoch % self.period == 0):
-                curr_path = self.path / f'model_weights_{epoch}'
-                shutil.copy(model_path, curr_path)
-                # save_model(model, self.path / f'model_weights_{epoch}')
 
