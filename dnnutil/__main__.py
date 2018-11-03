@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 def make_template(args):
+    '''TODO:docs
+    '''
     if os.path.isfile(args.file):
         while True:
             resp = input(
@@ -22,6 +24,8 @@ def make_template(args):
 
 
 def make_config(args):
+    '''TODO:docs
+    '''
     conf = Path(args.file).with_suffix('.json')
     if conf.is_file():
         while True:
