@@ -7,7 +7,7 @@ __all__ = ['calculate_accuracy', 'Trainer', 'ClassifierTrainer', 'AutoencoderTra
 
 
 def calculate_accuracy(prediction, label, axis=1):
-    '''accuracy(prediction, label)
+    '''calculate_accuracy(prediction, label)
     
     Computes the mean accuracy over a batch of predictions and corresponding
     ground-truth labels.
@@ -27,7 +27,7 @@ def calculate_accuracy(prediction, label, axis=1):
 
 
 class Trainer(object):
-    '''Trainer(net, optim, loss_fn, accuracy_metric, epoch_size=None)
+    '''Trainer(net, optim, loss_fn, accuracy_metric=None)
     
     Base class for all network trainers. Network trainer classes provide 
     methods to facilitate training and testing deep network models. The goal
@@ -44,16 +44,15 @@ class Trainer(object):
         accuracy_metric (callable): A callabel that calculates and returns
             an accuracy value. Usually this will be a floating point number
             in [0, 1].
-        epoch_size (int): An optional epoch size, denoting the number of
-            batches per epoch. If None, an epoch will consist of as many
-            batches as can be made from the dataset.
     '''
-    def __init__(self, net, optim, loss_fn, accuracy_metric, epoch_size=None):
+    def __init__(self, net, optim, loss_fn, accuracy_metric=None)
         self.net = net
         self.loss_fn = loss_fn
         self.optim = optim
-        self.measure_accuracy = accuracy_metric
-        self.epoch_size = epoch_size
+        if accuracy_metric is not None:
+            self.measure_accuracy = accuracy_metric
+        else:
+            self.measure_accuracy = calculate_accuracy
 
         self.train_loss = 0.
         self.train_acc = 0.
@@ -122,11 +121,7 @@ class Trainer(object):
             loss (float): The mean loss over the epoch.
             accuracy (float): The mean accuracy over the epoch (in [0, 1]).
         '''
-        if self.epoch_size is None:
-            #N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
-            N = len(dataloader.batch_sampler)
-        else:
-            N = self.epoch_size
+        N = len(dataloader.batch_sampler)
         msg = 'train' if self.net.training else 'test'
         func = self.train_batch if self.net.training else self.test_batch
         loss = []
@@ -139,9 +134,6 @@ class Trainer(object):
 
             print(f'\rEPOCH {epoch}: {msg} batch {i:04d}/{N}{" "*10}',
                   end='', flush=True)
-
-            if self.epoch_size is not None and i == self.epoch_size:
-                break
 
         loss = np.mean(loss)
         acc = np.mean(acc)
@@ -160,7 +152,7 @@ class Trainer(object):
 
 
 class ClassifierTrainer(Trainer):
-    '''ClassifierTrainer(net, optim, loss_fn, accuracy_metric, epoch_size=None)
+    '''ClassifierTrainer(net, optim, loss_fn, accuracy_metric=None)
     
     Trainer for training a network to do image classification.
 
@@ -174,9 +166,6 @@ class ClassifierTrainer(Trainer):
         accuracy_metric (callable): A callabel that calculates and returns
             an accuracy value. Usually this will be a floating point number
             in [0, 1].
-        epoch_size (int): An optional epoch size, denoting the number of
-            batches per epoch. If None, an epoch will consist of as many
-            batches as can be made from the dataset.
     '''
     def train_batch(self, batch):
         '''Train the Trainer's network on a single training batch.
@@ -230,7 +219,7 @@ class ClassifierTrainer(Trainer):
 
 
 class AutoencoderTrainer(Trainer):
-    '''AutoencoderTrainer(net, optim, loss_fn, epoch_size=None)
+    '''AutoencoderTrainer(net, optim, loss_fn)
 
     Trainer for training an autoencoder network.
 
@@ -241,13 +230,10 @@ class AutoencoderTrainer(Trainer):
             inherits from torch.optim.Optimizer.
         loss_fn (callable): A callable that calculates and returns a loss
             value. The loss value should be a single-element Tensor.
-        epoch_size (int): An optional epoch size, denoting the number of
-            batches per epoch. If None, an epoch will consist of as many
-            batches as can be made from the dataset.
     '''
-    def __init__(self, net, optim, loss_fn, epoch_size=None):
+    def __init__(self, net, optim, loss_fn)
         super(AutoencoderTrainer, self).__init__(
-            net, optim, loss_fn, None, epoch_size)
+            net, optim, loss_fn, None)
         delattr(self, 'measure_accuracy')
 
     def train_batch(self, batch):
@@ -306,10 +292,7 @@ class AutoencoderTrainer(Trainer):
         Returns:
             loss (float): The mean loss over the epoch.
         '''
-        if self.epoch_size is None:
-            N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
-        else:
-            N = self.epoch_size
+        N = int(np.ceil(len(dataloader.dataset) / dataloader.batch_size))
         msg = 'train' if self.net.training else 'test'
         func = self.train_batch if self.net.training else self.test_batch
         loss = []
@@ -320,9 +303,7 @@ class AutoencoderTrainer(Trainer):
             print(f'\rEPOCH {epoch}: {msg} batch {i:04d}/{N}{" "*10}',
                   end='', flush=True)
 
-            if self.epoch_size is not None and i == self.epoch_size:
-                break
-
         loss = np.mean(loss)
 
         return loss
+
