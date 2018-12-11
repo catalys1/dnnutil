@@ -18,7 +18,15 @@
         "kwargs": {
         }
     },
+    "trainer": {
+        "module": "",
+        "trainer": ""
+    },
     "hyperparams": {
+        "lr": 1e-3,
+        "batch-size": 16
+    },
+    "other": {
 
     }
 }
