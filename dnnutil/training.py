@@ -45,7 +45,7 @@ class Trainer(object):
             an accuracy value. Usually this will be a floating point number
             in [0, 1].
     '''
-    def __init__(self, net, optim, loss_fn, accuracy_metric=None)
+    def __init__(self, net, optim, loss_fn, accuracy_metric=None):
         self.net = net
         self.loss_fn = loss_fn
         self.optim = optim
@@ -231,7 +231,7 @@ class AutoencoderTrainer(Trainer):
         loss_fn (callable): A callable that calculates and returns a loss
             value. The loss value should be a single-element Tensor.
     '''
-    def __init__(self, net, optim, loss_fn)
+    def __init__(self, net, optim, loss_fn):
         super(AutoencoderTrainer, self).__init__(
             net, optim, loss_fn, None)
         delattr(self, 'measure_accuracy')
