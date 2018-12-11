@@ -4,9 +4,10 @@ import json
 import shutil
 from dnnutil.network import save_model
 from dnnutil.logger import TextLog
+from dnnutil.config import configure
 
 
-__all__ = ['Checkpointer', 'RunException', 'Manager']
+__all__ = ['Checkpointer', 'RunException', 'Manager', 'ConfigManager']
 
 
 class Checkpointer(object):
@@ -75,33 +76,8 @@ class RunException(Exception):
     pass
 
 
-class Manager(object):
-    '''The Manager class provides an interface for managing where output files
-    are stored for a given run. This makes it easy to keep all output, logs,
-    checkpoints, etc. together in one location -- particularly when running
-    multiple experiments. 
-    
-    The output of different runs are saved in numbered folders (starting from
-    1). These are saved under a root runs folder.
-
-    Args:
-        root (str or Path): Path to root folder where run data will be saved.
-            Default: "./runs/".
-        run_num (int): A numeric identifier for the run. If 0, it will be set
-            to 1 greater than the largest existing run id. If None, no new run
-            will be created -- this will have to be done later with a call to
-            set_run. Default: None.
-
-    Kwargs:
-        enforce_exists (bool): If True and run_num is something other than 0
-            or None, a RunException will be raised if a run for run_num does
-            not already exist. Default: True.
-        create_ok (bool): If True, allows the Manager to create the directory
-            given by `root`, including all intermediate directories, if any.
-            Default: True.
-
-    Additional keyword arguments will be passed to the constructor of
-    Checkpointer.
+class _Manager(object):
+    '''Base class for managers.
     '''
     def __init__(self, root='./runs/', run_num=None, **kwargs):
         self.root = Path(root)
@@ -161,25 +137,6 @@ class Manager(object):
             raise RunException('No previous run exists')
         return last
 
-    def set_description(self, description='', overwrite=False):
-        '''Writes a description to description.txt in the run folder.
-
-        Args:
-            description (str): A textual description of this run. This can
-                be anything that you would want to know or remember about this
-                run, such as how it differs from other runs. If the description
-                is empty or None, the user will be prompted to enter
-                a description at the prompt. Default: "" (empty).
-            overwrite (bool): If True, overwrite description.txt (if it
-                exists). Otherwise, append to it. Default: False.
-        '''
-        mode = 'w' if overwrite else 'a'
-        with self.run_dir.joinpath('description.txt').open(mode) as fp:
-            if not description:
-                description = input('Enter a description:\n')
-            if description:
-                print(description, file=fp)
-
     def log(self, epoch, time, train_loss=0, train_acc=0, test_loss=0,
             test_acc=0, lr=None):
         '''TODO
@@ -226,6 +183,54 @@ class Manager(object):
         kwargs.update(epoch_num=epoch_num, lr=lr)
         with open(self.run_dir / '.state.json', 'w') as f:
             json.dump(kwargs, f)
+
+
+class Manager(_Manager):
+    '''The Manager class provides an interface for managing where output files
+    are stored for a given run. This makes it easy to keep all output, logs,
+    checkpoints, etc. together in one location -- particularly when running
+    multiple experiments. 
+    
+    The output of different runs are saved in numbered folders (starting from
+    1). These are saved under a root runs folder.
+
+    Args:
+        root (str or Path): Path to root folder where run data will be saved.
+            Default: "./runs/".
+        run_num (int): A numeric identifier for the run. If 0, it will be set
+            to 1 greater than the largest existing run id. If None, no new run
+            will be created -- this will have to be done later with a call to
+            set_run. Default: None.
+
+    Kwargs:
+        enforce_exists (bool): If True and run_num is something other than 0
+            or None, a RunException will be raised if a run for run_num does
+            not already exist. Default: True.
+        create_ok (bool): If True, allows the Manager to create the directory
+            given by `root`, including all intermediate directories, if any.
+            Default: True.
+
+    Additional keyword arguments will be passed to the constructor of
+    Checkpointer.
+    '''
+    def set_description(self, description='', overwrite=False):
+        '''Writes a description to description.txt in the run folder.
+
+        Args:
+            description (str): A textual description of this run. This can
+                be anything that you would want to know or remember about this
+                run, such as how it differs from other runs. If the description
+                is empty or None, the user will be prompted to enter
+                a description at the prompt. Default: "" (empty).
+            overwrite (bool): If True, overwrite description.txt (if it
+                exists). Otherwise, append to it. Default: False.
+        '''
+        mode = 'w' if overwrite else 'a'
+        with self.run_dir.joinpath('description.txt').open(mode) as fp:
+            if not description:
+                description = input('Enter a description:\n')
+            if description:
+                print(description, file=fp)
 
     def load_state(self, args, match_model_epoch=False, use_best=False,
                    restore_lr=True):
@@ -284,4 +289,109 @@ class Manager(object):
             args.lr = state['lr']
         
         return args
+
+
+class ConfigManager(_Manager):
+    '''A manager class for config-file based experiments.
+
+    This manager handles the same general tasks as Manager, such as
+    keeping track of different experimental runs including logging and
+    checkpointing models, and saving state so that experiments can be
+    picked up where they left off. Furthermore, this manager also sets
+    up a configuration and tracks the config file.
+
+    Args:
+        root (str or Path): Path to root folder where run data will be saved.
+            Default: "./runs/".
+        run_num (int): A numeric identifier for the run. If 0, it will be set
+            to 1 greater than the largest existing run id. If None, no new run
+            will be created -- this will have to be done later with a call to
+            set_run. Default: None.
+
+    Kwargs:
+        enforce_exists (bool): If True and run_num is something other than 0
+            or None, a RunException will be raised if a run for run_num does
+            not already exist. Default: True.
+        create_ok (bool): If True, allows the Manager to create the directory
+            given by `root`, including all intermediate directories, if any.
+            Default: True.
+
+    Additional keyword arguments will be passed to the constructor of
+    Checkpointer.
+    '''
+    def setup(self, args):
+        '''Setup the experiment.
+
+        Returns an object with the configuration data for an experiment.
+
+        Args:
+            args (namespace): A namespace object, presumably created by
+                an argparse.ArgumentParser. Should contain a field
+                called setup, which takes on of the following values:
+                'start', for initializing a new experiment; 'continue',
+                for resuming an experiment; or a callable that will be
+                executed if not one of the other choices.
+
+        Returns:
+            Configuration or None: An object with the configuration
+                if args.setup was one of 'start' or 'continue',
+                oterhwise None.
+        '''
+        if args.setup == 'start':
+            shutil.copy(args.config, self.run_dir / 'config.json')
+            cfg = configure(args.config)
+            self.start_state(cfg, args)
+            return cfg
+        elif args.setup == 'continue':
+            return self.load_state(args)
+        else:
+            raise ValueError('{} is not a supported setup mode'.format(args.setup))
+
+    def start_state(self, cfg, args):
+        '''
+        '''
+        self._cfg2args(cfg, args)
+        args.start = 0
+
+    def _cfg2args(self, cfg, args):
+        for k in cfg.hp:
+            if not hasattr(args, k) or getattr(args, k) is None:
+                setattr(args, k, cfg.hp[k])
+
+
+    def load_state(self, args):
+        '''Load state necessary to resume a previously halted
+        experiment.
+
+        Updates (in place) the input args dictionary with the
+        previously saved state. Also loads the configuration from the
+        saved configuration file. This function should only be called
+        if the state and config file were previously saved in the run
+        directory.
+
+        Args:
+            args (namespace): A namespace, presumably generated by an
+                Argparse.ArgumentParser. This will be edited in place
+                with the previously saved arguments.
+
+        Returns:
+            dict: The configuration dictionary.
+        '''
+        f = self.run_dir / '.state.json'
+        if not f.is_file():
+            raise RunException(f'Attempted to load state at {str(f)}, but no '
+                'saved state exists')
+        with open(f, 'r') as f:
+            state = json.load(f)
+
+        weight_file = self.run_dir / 'model_weights'
+        args.model = str(weight_file)
+        args.start = state['epoch_num'] + 1
+        if 'lr' not in args or args.lr == None:
+            args.lr = state['lr']
+
+        cfg = configure(self.run_dir / 'config.json')
+        self._cfg2args(cfg, args)
+        
+        return cfg
 
