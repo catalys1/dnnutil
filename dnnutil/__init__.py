@@ -4,6 +4,7 @@ from .network import *
 from .training import *
 from .manage import *
 from .optim import *
+from .misc import *
 
 
 name = 'dnnutil'

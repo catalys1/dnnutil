@@ -24,26 +24,41 @@ class _Configuration(object):
 
         # Network
         model_def = cf['network']
-        model_mod = importlib.import_module(model_def['module'])
+        model_pkg = model_def.get('package', None)
+        model_mod = importlib.import_module(model_def['module'], model_pkg)
         model_class = getattr(model_mod, model_def['model'])
         model_kwargs = model_def['kwargs']
 
         # Dataset
         data_def = cf['dataset']
-        data_mod = importlib.import_module(data_def['module'])
-        dataset = getattr(data_mod, data_def['dataset'])
-        data_kwargs = data_def['kwargs']
+        if data_def['module']:
+            data_pkg = data_def.get('package', None)
+            data_mod = importlib.import_module(data_def['module'], data_pkg)
+            dataset = getattr(data_mod, data_def['dataset'])
+            data_kwargs = data_def['kwargs']
+        else:
+            dataset = None
+            data_kwargs = {}
 
         # Loss
         loss_def = cf['loss']
-        loss_mod = importlib.import_module(loss_def['module'])
-        loss = getattr(loss_mod, loss_def['loss'])
-        loss_kwargs = loss_def['kwargs']
+        if loss_def['module']:
+            loss_pkg = loss_def.get('package', None)
+            loss_mod = importlib.import_module(loss_def['module'], loss_pkg)
+            loss = getattr(loss_mod, loss_def['loss'])
+            loss_kwargs = loss_def['kwargs']
+        else:
+            loss = None
+            loss_kwargs = {}
 
         # Trainer
         trainer_def = cf['trainer']
-        trainer_mod = importlib.import_module(trainer_def['module'])
-        trainer = getattr(trainer_mod, trainer_def['trainer'])
+        if trainer_def['module']:
+            t_pkg = trainer_def.get('package', None)
+            trainer_mod = importlib.import_module(trainer_def['module'], t_pkg)
+            trainer = getattr(trainer_mod, trainer_def['trainer'])
+        else:
+            trainer = None
 
         # Hyperparameters
         params  = cf['hyperparams']
