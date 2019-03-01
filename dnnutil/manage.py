@@ -155,7 +155,7 @@ class _Manager(object):
         self.checkpointer.checkpoint(model, val, epoch)
 
     def epoch_save(self, net, epoch, time, lr, train_loss=0, train_acc=0,
-                   test_loss=0, test_acc=0):
+                   test_loss=0, test_acc=0, **kwargs):
         '''Save and log at the end of an epoch.
 
         Convenience method for taking care of all the end-of-epoch
@@ -166,7 +166,7 @@ class _Manager(object):
             TODO
         '''
         self.log(epoch, time, train_loss, train_acc, test_loss, test_acc, lr)
-        self.save_state(epoch, lr)
+        self.save_state(epoch, lr, **kwargs)
         self.checkpoint(net, test_loss, epoch)
 
     def save_state(self, epoch_num, lr, **kwargs):
@@ -178,11 +178,11 @@ class _Manager(object):
             lr (float): Last learning rate used.
 
         Kwargs:
-            None currently.
+            optim (a
         '''
         kwargs.update(epoch_num=epoch_num, lr=lr)
-        with open(self.run_dir / '.state.json', 'w') as f:
-            json.dump(kwargs, f)
+        with open(self.run_dir / '.state', 'wb') as f:
+            torch.save(kwargs, f)
 
 
 class Manager(_Manager):
@@ -257,12 +257,12 @@ class Manager(_Manager):
         if not hasattr(args, 'resume') or not args.resume:
             return args
 
-        f = self.run_dir / '.state.json'
+        f = self.run_dir / '.state'
         if not f.is_file():
             raise RunException(f'Attempted to load state at {str(f)}, but no '
                 'saved state exists')
-        with open(f, 'r') as f:
-            state = json.load(f)
+        with open(f, 'rb') as f:
+            state = torch.load(f)
 
         try:
             model_weight_files = sorted(
@@ -377,18 +377,22 @@ class ConfigManager(_Manager):
         Returns:
             dict: The configuration dictionary.
         '''
-        f = self.run_dir / '.state.json'
+        f = self.run_dir / '.state'
         if not f.is_file():
             raise RunException(f'Attempted to load state at {str(f)}, but no '
                 'saved state exists')
-        with open(f, 'r') as f:
-            state = json.load(f)
+        with open(f, 'rb') as f:
+            state = torch.load(f)
 
         weight_file = self.run_dir / 'model_weights'
         args.model = str(weight_file)
         args.start = state['epoch_num'] + 1
         if 'lr' not in args or args.lr == None:
             args.lr = state['lr']
+        if 'optim' in state:
+            args.optim = state['optim']
+            if hasattr(args, 'lr'):
+                state['optim']['param_groups'][0]['lr'] = args.lr
 
         cfg = configure(self.run_dir / 'config.json')
         self._cfg2args(cfg, args)
