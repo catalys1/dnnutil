@@ -57,10 +57,12 @@ def purge(args):
                 for f in run.iterdir():
                     os.remove(f)
                 os.removedirs(run)
+                print(f'Delete {run.name}')
     runs = sorted(list(rundir.iterdir()), key=lambda x:int(x.name))
     for i, run in enumerate(runs):
         if int(run.name) != i + 1:
             shutil.move(run, run.with_name(str(i + 1)))
+            print(f'Move {run.name} -> {i + 1}')
 
 
 def desc(args):

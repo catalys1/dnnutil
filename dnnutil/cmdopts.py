@@ -73,7 +73,8 @@ def config_parser(description='', **kwargs):
     a = parser.add_argument('--model', default='',
         help='Path to model checkpoint')
     a = parser.add_argument('-D', '--run-dir', default=rundir,
-        help='Path to root directory where runs should be saved.')
+        help='Path to root directory where runs should be saved. '
+             f'Default: {rundir}.')
     
     subparsers = parser.add_subparsers()
 
