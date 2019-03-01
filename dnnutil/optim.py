@@ -34,3 +34,11 @@ class EpochSetLR(torch.optim.lr_scheduler._LRScheduler):
         if self.last_epoch in self.epoch_lrs:
             self.current_lrs = [lr * self.epoch_lrs[self.last_epoch] for lr in self.current_lrs]
         return self.current_lrs
+
+
+class CosineAnealingLR(torch.optim.lr_scheduler._LRScheduler):
+    pass
+
+
+def lr_sweep(lr_min, lr_max, batch_size=None, epochs=1):
+    pass
