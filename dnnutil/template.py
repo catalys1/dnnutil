@@ -46,22 +46,17 @@ def main():
     # trainer handles the details of training/eval, logger keeps a log of the
     # training, checkpointer handles saving model weights
     trainer = dnnutil.ClassifierTrainer(net, optim, loss_fn, accuracy)
-    logger = dnnutil.TextLog(manager.run_dir / 'log.txt', create_ok=True)
-    checkpointer = dnnutil.Checkpointer(checkpoint_dir=manager.run_dir,
-                                        save_multi=False, period=5,
-                                        save_best=True, metric='loss')
 
     for e in range(args.start, args.start + args.epochs):
         start = time.time()
 
-        train_loss, train_acc = trainer.train(train_loader, e)
-        test_loss, test_acc = trainer.eval(test_load, e)
+        trainer.train(train_loader, e)
+        trainer.eval(test_load, e)
+        stats = trainer.get_stats()
 
         t = time.time() - start
         lr = optim.param_groups[-1]['lr']
-        logger.log(e, t, train_loss, train_acc, test_loss, test_acc, lr)
-        checkpointer.checkpoint(net, test_loss, e)
-        manager.save_state(e, lr)
+        manager.epoch_save(net, e, t, lr, *stats)
 
 
 if __name__ == '__main__':

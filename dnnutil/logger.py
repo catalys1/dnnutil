@@ -1,6 +1,9 @@
 from pathlib import Path
 
 
+__all__ = ['TextLog']
+
+
 class TextLog(object):
     '''TextLog(filepath, console=True, create_ok=True)
 
@@ -47,7 +50,7 @@ class TextLog(object):
         '''
         lr = f'{lr:1.0e}' if lr is not None else '-'
         s = (
-            f'EPOCH {epoch} (lr={lr}, time={time:.1f}): '
+            f'EPOCH {epoch:<3d} (lr={lr}, time={time:.1f}): '
             f'Train [{train_loss:.4f} ({train_acc * 100:02.2f})]  '
             f'Val [{test_loss:.4f} ({test_acc * 100:02.2f})]  '
         )

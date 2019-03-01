@@ -1,6 +1,9 @@
 import torch
 
 
+__all__ = ['EpochSetLR']
+
+
 class EpochSetLR(torch.optim.lr_scheduler._LRScheduler):
     '''Sets the initial learning rate of each parameter group to decay by an
     epoch-specific lambda. When last_epoch=-1, sets initial lr as lr.

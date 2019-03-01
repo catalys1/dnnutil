@@ -1,11 +1,32 @@
 {
+    "description": "",
     "network": {
-
+        "module": "",
+        "model": "",
+        "kwargs": {
+        }
     },
     "dataset": {
-
+        "module": "",
+        "dataset": "",
+        "kwargs": {
+        }
+    },
+    "loss": {
+        "module": "",
+        "loss": "",
+        "kwargs": {
+        }
+    },
+    "trainer": {
+        "module": "",
+        "trainer": ""
     },
     "hyperparams": {
+        "lr": 1e-3,
+        "batch-size": 16
+    },
+    "other": {
 
     }
 }
