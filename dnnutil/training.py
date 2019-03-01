@@ -23,7 +23,7 @@ def calculate_accuracy(prediction, label, axis=1):
         accuracy (Tensor): A single-element Tensor containing the percent of
             correct predictions in the batch as a value between 0 and 1.
     '''
-    return torch.eq(prediction.argmax(axis), label).float().mean()
+    return torch.eq(prediction.argmax(axis), label).float().mean().item()
 
 
 class Trainer(object):
