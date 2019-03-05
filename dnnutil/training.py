@@ -127,18 +127,37 @@ class Trainer(object):
         loss = []
         acc = []
         for i, batch in enumerate(dataloader):
+            if self.net.training:
+                self.update_lr(epoch * N + i + 1)
             batch_loss, batch_acc = func(batch)
-                
+
             loss.append(batch_loss)
             acc.append(batch_acc)
 
-            print(f'\rEPOCH {epoch}: {msg} batch {i:04d}/{N}{" "*10}',
+            print(f'\rEPOCH {epoch}: {msg} '
+                  f'batch {i + 1:04d}/{N} '
+                  f'lr[ {self.optim.param_groups[0]["lr"]:1.3e} ]'
+                  f'{" "*10}',
                   end='', flush=True)
 
         loss = np.mean(loss)
         acc = np.mean(acc)
 
         return loss, acc
+
+    def update_lr(self, i=None):
+        '''Update the optimizer's learning rate. Used for batch-level
+        learning rate scheduling. If using an epoch-level scheduler, 
+        define and use it in the epoch loop. If the iteration number is
+        not provided (None) or the Trainer has no lr_schedule attribute,
+        this function does nothing and returns.
+
+        Args:
+            i (int): iteration number (starts at 1 for the first batch).
+        '''
+        if i is None or not hasattr(self, 'lr_schedule'):
+            return
+        self.lr_schedule.step(i)
         
     def train_batch(self, batch):
         '''Train the Trainer's network on a single training batch.
