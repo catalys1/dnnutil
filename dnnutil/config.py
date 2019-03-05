@@ -1,9 +1,10 @@
+import torch
 import importlib
 import json
 from types import SimpleNamespace
 
 
-__all__ = ['configure']
+__all__ = ['configure', 'get_dataloaders']
 
 
 def configure(config_file):
@@ -51,6 +52,17 @@ class _Configuration(object):
             loss = None
             loss_kwargs = {}
 
+        # Optimizer
+        optim_def = cf.get('optimizer', False)
+        if optim_def:
+            opt_pkg = optim_def.get('package', None)
+            opt_mod = importlib.import_module(optim_def['module'], opt_pkg)
+            opt = getattr(opt_mod, optim_def['optim'])
+            opt_kwargs = optim_def['kwargs']
+        else:
+            opt = None
+            opt_kwargs = {}
+
         # Trainer
         trainer_def = cf['trainer']
         if trainer_def['module']:
@@ -69,6 +81,7 @@ class _Configuration(object):
         self.model = SimpleNamespace(model=model_class, args=model_kwargs)
         self.data = SimpleNamespace(data=dataset, args=data_kwargs)
         self.loss = SimpleNamespace(loss=loss, args=loss_kwargs)
+        self.optim = SimpleNamespace(optim=opt, args=opt_kwargs)
         self.trainer = trainer
         self.hp = params
         self.other = other
@@ -81,4 +94,21 @@ class _Configuration(object):
 
     def __str__(self):
         return repr(self)
+
+
+def get_dataloaders(data, batch_size, num_workers=8, collate=None):
+    '''TODO:docs
+    '''
+    args = dict(
+        batch_size=batch_size,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+    if collate is not None:
+        args['collate_fn'] = collate
+
+    trl = torch.utils.data.DataLoader(data.train(), shuffle=True, **args)
+    tre = torch.utils.data.DataLoader(data.test(), **args)
+
+    return trl, tre
 
