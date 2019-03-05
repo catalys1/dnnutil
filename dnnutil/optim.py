@@ -1,7 +1,8 @@
 import torch
+import math
 
 
-__all__ = ['EpochSetLR']
+__all__ = ['EpochSetLR', 'CosineAnealingLR']
 
 
 class EpochSetLR(torch.optim.lr_scheduler._LRScheduler):
@@ -37,7 +38,45 @@ class EpochSetLR(torch.optim.lr_scheduler._LRScheduler):
 
 
 class CosineAnealingLR(torch.optim.lr_scheduler._LRScheduler):
-    pass
+    '''Implements cosine anealed learning rate scheduler with restarts.
+    This learning rate scheduler is meant to operate at the mini-batch
+    level, so the `epoch` argument to step() should be the current
+    iteration number.
+
+    Args:
+        optimizer (torch.nn.Optimizer): reference to an optimizer object.
+        lr_max (float): the maximum learning rate within a cycle.
+        stepsize (int): number of iterations in a cycle.
+        last_epoch (int): the index of the last iteration. Default: -1.
+
+    Example:
+        >>> scheduler = CosineAnealingLR(optim, 0.2, 10)
+        >>> for i in range(11):
+        >>>     scheduler.step(i + 1)
+        >>>     print(optim.param_groups[0]['lr'])
+        0.2
+        0.19510565162951538
+        0.18090169943749476
+        ...
+        0.2
+    '''
+    def __init__(self, optimizer, lr_max, stepsize, last_epoch=-1):
+        self.lr_max = lr_max
+        self.stepsize = stepsize
+        super(CosineAnealingLR, self).__init__(optimizer, last_epoch)
+
+    def _f(self, i):
+        '''Compute the LR for a given iteration'''
+        a = self.lr_max
+        stepsize = self.stepsize
+        lr = a / 2 * (
+             math.cos(math.pi * ((i - 1) % stepsize) / stepsize) + 1)
+        return lr
+
+    def get_lr(self):
+        lr = self._f(self.last_epoch)
+        return [lr for _ in self.base_lrs]
+        
 
 
 def lr_sweep(lr_min, lr_max, batch_size=None, epochs=1):
