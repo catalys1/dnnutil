@@ -72,8 +72,18 @@ def desc(args):
     runs = sorted(list(rundir.iterdir()), key=lambda x:int(x.name))
     for run in runs:
         j = json.load(open(run / 'config.json'))
-        d = j['description']
+        d = j.pop('description')
         print(f'Run id {run.name:>2}:  {d}')
+        if args.verbose:
+            hp = j.pop('hyperparams', None)
+            for k, v in j.items():
+                v.pop('package', None)
+                v.pop('module', None)
+                kwargs = v.pop('kwargs', None)
+                others = list(v.values())
+                if others and others[0]:
+                    print(f'    {k}: {others[0]} {kwargs}')
+            print(f'    {hp}\n')
 
 
 if __name__ == '__main__':
@@ -106,6 +116,8 @@ if __name__ == '__main__':
         help='Prints the description field from the config file for each run.')
     parse_desc.add_argument('dir', type=str,
         help='Run directory to look in.')
+    parse_desc.add_argument('-v', dest='verbose', action='store_true',
+        help='Print verbose output.')
     parse_desc.set_defaults(func=desc)
 
     args = parser.parse_args()
@@ -114,5 +126,4 @@ if __name__ == '__main__':
         args.func(args)
     else:
         parser.print_help()
-
 
