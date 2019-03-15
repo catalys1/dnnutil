@@ -22,9 +22,15 @@
         "module": "",
         "trainer": ""
     },
+    "optimizer": {
+        "module": "",
+        "optim": "",
+        "kwargs": {
+        }
+    },
     "hyperparams": {
         "lr": 1e-3,
-        "batch-size": 16
+        "batch_size": 16
     },
     "other": {
 
