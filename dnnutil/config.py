@@ -4,7 +4,7 @@ import json
 from types import SimpleNamespace
 
 
-__all__ = ['configure', 'get_dataloaders']
+__all__ = ['configure', 'config_string', 'get_dataloaders']
 
 
 def configure(config_file):
@@ -94,6 +94,29 @@ class _Configuration(object):
 
     def __str__(self):
         return repr(self)
+
+
+def config_string(config):
+    '''TODO:docs
+    '''
+    if type(config) is str:
+        config = json.load(open(config))
+    j = config
+
+    description = j.pop('description')
+
+    details = ''
+    hp = j.pop('hyperparams', None)
+    for k, v in j.items():
+        v.pop('package', None)
+        v.pop('module', None)
+        kwargs = v.pop('kwargs', None)
+        others = list(v.values())
+        if others and others[0]:
+            details += f'    {k}: {others[0]} {kwargs}\n'
+    details += f'    {hp}\n'
+
+    return description, details
 
 
 def get_dataloaders(data, batch_size, num_workers=8, collate=None):
