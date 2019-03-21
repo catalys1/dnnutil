@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import dnnutil.network as network
+import time
 
 
 __all__ = ['calculate_accuracy', 'Trainer', 'ClassifierTrainer', 'AutoencoderTrainer']
@@ -126,17 +127,25 @@ class Trainer(object):
         func = self.train_batch if self.net.training else self.test_batch
         loss = []
         acc = []
+        at = 0
         for i, batch in enumerate(dataloader):
+            t = time.time()
             if self.net.training:
                 self.update_lr(epoch * N + i + 1)
             batch_loss, batch_acc = func(batch)
+            t = time.time() - t
+            if i == 0:
+                at = t
+            else:
+                at = at * i / (i + 1) + t / (i + 1)
 
             loss.append(batch_loss)
             acc.append(batch_acc)
 
             print(f'\rEPOCH {epoch}: {msg} '
                   f'batch {i + 1:04d}/{N} '
-                  f'lr[ {self.optim.param_groups[0]["lr"]:1.3e} ]'
+                  f'lr[ {self.optim.param_groups[0]["lr"]:1.3e} ] '
+                  f'[ {t:.3f} ({at:.3f}) secs ]'
                   f'{" "*10}',
                   end='', flush=True)
 
