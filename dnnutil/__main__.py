@@ -51,14 +51,15 @@ def purge(args):
     '''
     rundir = Path(args.dir)
     for run in rundir.iterdir():
-        if run.is_dir():
+        if run.is_dir() and run.stem.isnumeric():
             if (not run.joinpath('.state').is_file() and
                 not run.joinpath('model_weights').is_file()):
                 for f in run.iterdir():
                     os.remove(f)
                 os.removedirs(run)
                 print(f'Delete {run.name}')
-    runs = sorted(list(rundir.iterdir()), key=lambda x:int(x.name))
+    runs = sorted([x for x in rundir.iterdir() if x.stem.isnumeric()],
+                  key=lambda x:int(x.name))
     for i, run in enumerate(runs):
         if int(run.name) != i + 1:
             shutil.move(run, run.with_name(str(i + 1)))
@@ -69,21 +70,17 @@ def desc(args):
     '''TODO:docs
     '''
     rundir = Path(args.dir)
-    runs = sorted(list(rundir.iterdir()), key=lambda x:int(x.name))
+    runs = sorted([x for x in rundir.iterdir() if x.stem.isnumeric()],
+                  key=lambda x:int(x.name))
     for run in runs:
-        j = json.load(open(run / 'config.json'))
-        d = j.pop('description')
-        print(f'Run id {run.name:>2}:  {d}')
-        if args.verbose:
-            hp = j.pop('hyperparams', None)
-            for k, v in j.items():
-                v.pop('package', None)
-                v.pop('module', None)
-                kwargs = v.pop('kwargs', None)
-                others = list(v.values())
-                if others and others[0]:
-                    print(f'    {k}: {others[0]} {kwargs}')
-            print(f'    {hp}\n')
+        try:
+            j = json.load(open(run / 'config.json'))
+            desc, deets = dnnutil.config_string(j)
+            print(f'Run id {run.name:>2}:  {desc}')
+            if args.verbose:
+                print(deets)
+        except Exception as e:
+            print(f'Run id {run.name:>2}:  (unable to read a config file)')
 
 
 if __name__ == '__main__':
