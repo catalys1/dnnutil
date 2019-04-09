@@ -83,6 +83,49 @@ def desc(args):
             print(f'Run id {run.name:>2}:  (unable to read a config file)')
 
 
+def compare(args):
+    '''TODO:docs
+    '''
+    from collections import OrderedDict
+    rundir = Path(args.dir)
+    if args.runs is None:
+        runs = sorted([x for x in rundir.iterdir() if x.stem.isnumeric()],
+                      key=lambda x:int(x.name))
+    else:
+        runs = sorted([rundir / run for run in args.runs])
+
+    if args.info is None:
+        keysets = []
+    else:
+        keysets = [x.split('.') for x in args.info]
+
+    info = []
+    for run in runs:
+        try:
+            log = run / 'log.txt'
+            acc = dnnutil.extract_metrics(log)[-1].max()
+            run_info = OrderedDict(run=run.name, accuracy=acc)
+            if args.info is not None:
+                j = json.load(open(run / 'config.json'))
+                for i in range(len(keysets)):
+                    ks = keysets[i]
+                    attribute = j[ks[0]]
+                    for next_key in ks[1:]:
+                        attribute = attribute.get(next_key, {})
+                    attribute = attribute if attribute != {} else None
+                    run_info[next_key] = attribute
+            info.append(run_info)
+        except FileNotFoundError as e:
+            pass
+
+    headers = list(info[0].keys())
+    template = '  '.join(f'{{:<{len(x)}}}' for x in headers)
+    print(template.format(*headers))
+    for i in range(len(info)):
+        vals = [str(info[i][x]) for x in headers]
+        print(template.format(*vals))
+
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
@@ -116,6 +159,22 @@ if __name__ == '__main__':
     parse_desc.add_argument('-v', dest='verbose', action='store_true',
         help='Print verbose output.')
     parse_desc.set_defaults(func=desc)
+
+    parse_comp = subs.add_parser('compare', aliases=['comp'],
+        help='Display a comparison of best test accuracy between different '
+             'runs in a run directory.')
+    parse_comp.add_argument('dir', type=str,
+        help='Run directory to look in.')
+    parse_comp.add_argument('-r', '--runs', type=str, nargs='*',
+        help='A list of runs to compare. If not specified, all runs in dir '
+             'will be used.')
+    parse_comp.add_argument('-i', '--info', type=str, nargs='*',
+        help='A set of attribute values to display. Each attribute consists '
+             'of a period-seperated list of identifiers, i.e. "model.model" '
+             'or "optimizer.kwargs.weight_decay"')
+    parse_comp.add_argument('-p', '--plot', action='store_true',
+        help='Plot the results on a bar graph.')
+    parse_comp.set_defaults(func=compare)
 
     args = parser.parse_args()
 
