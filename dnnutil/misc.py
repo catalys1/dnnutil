@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-__all__ = ['make_img']
+__all__ = ['make_img', 'extract_metrics']
 
 
 def make_img(tensor, pad=1, rows=None):
@@ -26,7 +26,10 @@ def make_img(tensor, pad=1, rows=None):
     Returns:
         Image grid (numpy.ndarray)
     '''
-    img = tensor.cpu().numpy()
+    if type(tensor) is not np.ndarray:
+        img = tensor.cpu().numpy()
+    else:
+        img = tensor
 
     n = tensor.shape[0]
     if rows is None:
@@ -57,4 +60,38 @@ def make_img(tensor, pad=1, rows=None):
     img = img.squeeze()
 
     return img
+
+
+def extract_metrics(logfile):
+    '''Extract loss and accuracy metrics from a text log file.
+
+    Args:
+        logfile (str): path to log file.
+
+    Returns:
+        A 4xn numpy array, where the rows are respectively training loss,
+        testing loss, training accuracy, and testing accuracy.
+    '''
+    import re
+    raw = open(logfile).read()
+    nums = re.findall('\[([0-9.]*) \(([0-9.]*)\)\]', raw)
+    arr = np.array([float(x) for y in nums for x in y]).reshape(-1, 4).T
+    arr = arr[[0, 2, 1, 3]]
+    return arr
+
+
+def plot_metrics(**args):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    sns.set()
+    fig, ax = plt.subplots(1, 2)
+    pal = sns.palplot(
+            sns.cubehelix_palette(len(args), start=1.2, rot=-1, dark=.2, light=.8))
+
+    for i, d in enumerate(args):
+        ax[0].plot(d[0], color=pal[i])
+        ax[0].plot(d[1], color=pal[i], linestyle='-')
+        ax[1].plot(d[2], color=pal[i])
+        ax[1].plot(d[3], color=pal[i], linestyle='-')
 
