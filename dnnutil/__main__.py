@@ -92,7 +92,21 @@ def compare(args):
         runs = sorted([x for x in rundir.iterdir() if x.stem.isnumeric()],
                       key=lambda x:int(x.name))
     else:
-        runs = sorted([rundir / run for run in args.runs])
+        def expand(x):
+            if x.isnumeric():
+                return x
+            else:
+                x1, x2 = x.split('-')
+                return range(int(x1), int(x2) + 1)
+        runs = []
+        for run in args.runs:
+            run = expand(run)
+            if isinstance(run, str):
+                runs.append(run)
+            else:
+                runs.extend([str(x) for x in run])
+        runs = sorted([rundir / run for run in runs],
+                      key=lambda x:int(x.name))
 
     if args.info is None:
         keysets = []
@@ -117,6 +131,8 @@ def compare(args):
             info.append(run_info)
         except FileNotFoundError as e:
             pass
+        except ValueError as e:
+            pass
 
     headers = list(info[0].keys())
     template = '  '.join(f'{{:<{len(x)}}}' for x in headers)
@@ -124,6 +140,9 @@ def compare(args):
     for i in range(len(info)):
         vals = [str(info[i][x]) for x in headers]
         print(template.format(*vals))
+
+    if args.plot:
+        pass
 
 
 if __name__ == '__main__':
@@ -167,8 +186,8 @@ if __name__ == '__main__':
         help='Run directory to look in.')
     parse_comp.add_argument('-r', '--runs', type=str, nargs='*',
         help='A list of runs to compare. If not specified, all runs in dir '
-             'will be used.')
-    parse_comp.add_argument('-i', '--info', type=str, nargs='*',
+             'will be used. Supports ranges, like "1-5".')
+    parse_comp.add_argument('-i', '--info', metavar='key', type=str, nargs='*',
         help='A set of attribute values to display. Each attribute consists '
              'of a period-seperated list of identifiers, i.e. "model.model" '
              'or "optimizer.kwargs.weight_decay"')
